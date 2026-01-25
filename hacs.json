@@ -1,6 +1,7 @@
 {
   "name": "Flower Card",
   "render_readme": true,
+  "type": "plugin",
   "filename": "flower-card.js",
   "content_in_root": true,
   "zip_release": false,
