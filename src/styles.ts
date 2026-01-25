@@ -184,4 +184,23 @@ export const style = css`
     display: none;
   }
 }
+
+/* Next watering display and badge */
+#next-watering {
+  display: block;
+  color: var(--secondary-text-color, #8c96a5);
+  margin-top: 6px;
+  font-size: 0.9em;
+}
+.watering-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.75em;
+  color: #fff;
+  background: #f39c12;
+}
+.watering-badge.overdue { background: #e74c3c; }
+.watering-badge.soon { background: #f39c12; }
 `;

@@ -137,10 +137,44 @@ export default class FlowerCard extends LitElement {
     } catch (e) {
       nextWaterFromInfo = null;
     }
-    const nextWaterRaw = nextWaterAttr || nextWaterFromInfo;
+
+    // Prefer dedicated watering sensor if present (sensor.<base>_watering)
+    const nextWaterRawInitial = nextWaterAttr || nextWaterFromInfo;
+    let nextWaterRaw = nextWaterRawInitial;
+    try {
+      const wateringSensor = this.findWateringSensor();
+      if (
+        wateringSensor &&
+        wateringSensor.attributes &&
+        wateringSensor.attributes.next_watering
+      ) {
+        nextWaterRaw = String(wateringSensor.attributes.next_watering);
+      }
+    } catch (e) {
+      /* ignore */
+    }
+
     const nextWaterDisplay = nextWaterRaw
       ? this.formatNextWatering(nextWaterRaw)
       : null;
+
+    // Determine watering badge state
+    let wateringBadge: string | null = null;
+    let wateringBadgeClass = "";
+    if (nextWaterRaw) {
+      const d = new Date(nextWaterRaw);
+      if (!isNaN(d.getTime())) {
+        const diffMs = d.getTime() - Date.now();
+        const diffHours = diffMs / (1000 * 60 * 60);
+        if (diffMs <= 0) {
+          wateringBadge = "À arroser maintenant";
+          wateringBadgeClass = "overdue";
+        } else if (diffHours <= 24) {
+          wateringBadge = "À arroser bientôt";
+          wateringBadgeClass = "soon";
+        }
+      }
+    }
     const headerCssClass =
       this.config.display_type === DisplayType.Compact
         ? "header-compact"
@@ -174,6 +208,7 @@ export default class FlowerCard extends LitElement {
                 >Prochain arrosage: ${nextWaterDisplay}</span
               >`
             : ""}
+          ${wateringBadge ? html`<span class="watering-badge ${wateringBadgeClass}">${wateringBadge}</span>` : ""}
         </div>
         <div class="divider"></div>
         ${renderAttributes(this)}
@@ -226,6 +261,33 @@ export default class FlowerCard extends LitElement {
     } catch (e) {
       return raw;
     }
+  }
+
+  private findWateringSensor(): any {
+    if (!this._hass || !this.config?.entity) return null;
+    const base = this.config.entity.split('.')[1];
+    if (!base) return null;
+    const candidates = [
+      `sensor.${base}_watering`,
+      `sensor.${base}watering`,
+      `sensor.${base}_water`,
+      `sensor.${base}_watering_sensor`,
+    ];
+    for (const id of candidates) {
+      const s = (this._hass.states[id] as any);
+      if (s && s.attributes && s.attributes.next_watering) return s;
+    }
+    // fallback: find any sensor with next_watering and matching friendly name or id
+    const baseNorm = base.replace(/[_-]/g, ' ').toLowerCase();
+    for (const [id, st] of Object.entries(this._hass.states)) {
+      if (!id.startsWith('sensor.')) continue;
+      const s: any = st;
+      if (s && s.attributes && s.attributes.next_watering) {
+        const fname = (s.attributes.friendly_name || '').toLowerCase();
+        if (fname.includes(baseNorm) || id.includes(base)) return s;
+      }
+    }
+    return null;
   }
 
   getCardSize(): number {
