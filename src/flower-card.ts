@@ -175,6 +175,32 @@ export default class FlowerCard extends LitElement {
         }
       }
     }
+
+    // presence checks to avoid rendering empty/None fields
+    const hasBattery =
+      !!this.config?.battery_sensor &&
+      !!(
+        this._hass &&
+        this.config.battery_sensor &&
+        this._hass.states[this.config.battery_sensor]
+      );
+
+    const hasSpecies = !!species;
+
+    const hasImage = !!this.stateObj.attributes.entity_picture;
+
+    const attributesPresent = (() => {
+      try {
+        return (
+          !!this.plantinfo &&
+          !!this.plantinfo.result &&
+          Object.keys(this.plantinfo.result).length > 0
+        );
+      } catch (e) {
+        return false;
+      }
+    })();
+
     const headerCssClass =
       this.config.display_type === DisplayType.Compact
         ? "header-compact"
@@ -188,11 +214,10 @@ export default class FlowerCard extends LitElement {
           class="${headerCssClass}"
           @click="${() => moreInfo(this, this.stateObj.entity_id)}"
         >
-          <img
-            src="${this.stateObj.attributes.entity_picture
-              ? this.stateObj.attributes.entity_picture
-              : missingImage}"
-          />
+          ${hasImage
+            ? html`<img src="${this.stateObj.attributes.entity_picture}" />`
+            : ""}
+
           <span id="name">
             ${this.stateObj.attributes.friendly_name}
             <ha-icon
@@ -201,8 +226,11 @@ export default class FlowerCard extends LitElement {
                 : ""}"
             ></ha-icon>
           </span>
-          <span id="battery">${renderBattery(this)}</span>
-          <span id="species">${species} </span>
+
+          ${hasBattery
+            ? html`<span id="battery">${renderBattery(this)}</span>`
+            : ""}
+          ${hasSpecies ? html`<span id="species">${species}</span>` : ""}
           ${nextWaterDisplay
             ? html`<span id="next-watering"
                 >Prochain arrosage: ${nextWaterDisplay}</span
@@ -214,8 +242,10 @@ export default class FlowerCard extends LitElement {
               >`
             : ""}
         </div>
-        <div class="divider"></div>
-        ${renderAttributes(this)}
+        ${attributesPresent
+          ? html`<div class="divider"></div>
+              ${renderAttributes(this)}`
+          : ""}
       </ha-card>
     `;
   }
