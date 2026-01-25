@@ -154,9 +154,10 @@ export default class FlowerCard extends LitElement {
       /* ignore */
     }
 
-    const nextWaterDisplay = nextWaterRaw
+    const hasNextWater = !!nextWaterRaw;
+    const nextWaterDisplay = hasNextWater
       ? this.formatNextWatering(nextWaterRaw)
-      : null;
+      : "Non défini";
 
     // Determine watering badge state
     let wateringBadge: string | null = null;
@@ -231,11 +232,7 @@ export default class FlowerCard extends LitElement {
             ? html`<span id="battery">${renderBattery(this)}</span>`
             : ""}
           ${hasSpecies ? html`<span id="species">${species}</span>` : ""}
-          ${nextWaterDisplay
-            ? html`<span id="next-watering"
-                >Prochain arrosage: ${nextWaterDisplay}</span
-              >`
-            : ""}
+          <span id="next-watering" class="${hasNextWater ? "" : "missing"}">Prochain arrosage: ${nextWaterDisplay}</span>
           ${wateringBadge
             ? html`<span class="watering-badge ${wateringBadgeClass}"
                 >${wateringBadge}</span

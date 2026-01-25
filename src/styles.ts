@@ -210,6 +210,11 @@ export const style = css`
     margin-top: 6px;
     font-size: 0.9em;
   }
+  #next-watering.missing {
+    opacity: 0.6;
+    font-style: italic;
+    color: var(--secondary-text-color, #8c96a5);
+  }
   .watering-badge {
     display: inline-block;
     margin-left: 8px;
