@@ -4,10 +4,10 @@ name: "Auto Release"
 on:
   push:
     branches:
-      - 'main'
-      - 'master'
+      - "main"
+      - "master"
     paths:
-      - 'package.json'
+      - "package.json"
 
 jobs:
   build:
@@ -16,8 +16,8 @@ jobs:
     steps:
       - name: "✏️ Checkout code"
         uses: actions/checkout@v4
-        with: 
-          path: './'
+        with:
+          path: "./"
       - name: "🏷️ Get version tag"
         id: set_var
         run: echo "COMPONENT_VERSION=$(grep version package.json | cut -d ":" -f 2 | sed -e 's/[^0-9\.beta\-]//g')" >> $GITHUB_ENV
@@ -25,7 +25,7 @@ jobs:
       - name: "🏷️ Check if tag exists already"
         uses: mukunku/tag-exists-action@v1.4.0
         id: "check_tag"
-        with: 
+        with:
           tag: "v${{ env.COMPONENT_VERSION }}"
 
       - name: "❌ Cancel if tag is already present"
@@ -36,28 +36,37 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.check_tag.outputs.exists == 'true'
- 
+
       - name: "👷 Build using Node.js"
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: "20.x"
       - run: npm install
       - run: npm ci
       - run: npm run build --if-present
+
+      - name: "📁 Prepare web assets"
+        run: |
+          mkdir -p www/community
+          cp flower-card.js www/community/flower-card.js
+          # copy gz if present
+          cp flower-card.js.gz www/community/flower-card.js.gz || true
 
       - name: "📝 Commit files"
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add flower-card.js
-          git add flower-card.js.gz
+          git add flower-card.js.gz || true
+          git add www/community/flower-card.js || true
+          git add www/community/flower-card.js.gz || true
           git status
-          git commit -m "Add new build" -a
+          git commit -m "Add new build" -a || echo "No changes to commit"
       - name: "⬆️ Push changes"
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-  
+
   auto-release:
     name: "Auto Release"
     runs-on: "ubuntu-latest"
@@ -65,9 +74,9 @@ jobs:
     steps:
       - name: "⬇️ Checkout new code"
         uses: actions/checkout@v4
-        with: 
+        with:
           ref: master
-          path: './'
+          path: "./"
 
       - name: "🏷️ Get version tag"
         id: set_var
@@ -80,7 +89,7 @@ jobs:
       - name: "🏷️ Check if tag exists already"
         uses: mukunku/tag-exists-action@v1.4.0
         id: "check_tag"
-        with: 
+        with:
           tag: "v${{ env.COMPONENT_VERSION }}"
 
       - name: "❌ Cancel if tag is already present"
@@ -112,7 +121,7 @@ jobs:
         id: changelog
         uses: heinrichreimer/github-changelog-generator-action@v2.3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }} 
+          token: ${{ secrets.GITHUB_TOKEN }}
           sinceTag: ${{ steps.last_release.outputs.tag_name }}
           headerLabel: "# Notable changes since ${{ steps.last_release.outputs.tag_name }}"
           stripGeneratorNotice: true
