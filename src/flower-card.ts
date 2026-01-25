@@ -118,8 +118,15 @@ export default class FlowerCard extends LitElement {
       try {
         console.debug("FlowerCard: entity missing", {
           configEntity: this.config?.entity,
-          hassHasEntity: !!(this._hass && this.config?.entity && this._hass.states[this.config.entity]),
-          availableState: this._hass && this.config?.entity ? this._hass.states[this.config.entity] : null,
+          hassHasEntity: !!(
+            this._hass &&
+            this.config?.entity &&
+            this._hass.states[this.config.entity]
+          ),
+          availableState:
+            this._hass && this.config?.entity
+              ? this._hass.states[this.config.entity]
+              : null,
         });
       } catch (e) {
         console.debug("FlowerCard: error logging entity debug", e);
