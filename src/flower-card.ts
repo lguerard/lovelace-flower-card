@@ -213,7 +213,7 @@ export default class FlowerCard extends LitElement {
       <ha-card class="${haCardCssClass}">
         <div
           class="${headerCssClass}"
-          @click="${() => moreInfo(this, this.stateObj.entity_id)}"
+          @click="${() => this._openMoreInfo(this.stateObj.entity_id)}"
         >
           ${hasImage
             ? html`<img src="${this.stateObj.attributes.entity_picture}" />`
@@ -232,7 +232,9 @@ export default class FlowerCard extends LitElement {
             ? html`<span id="battery">${renderBattery(this)}</span>`
             : ""}
           ${hasSpecies ? html`<span id="species">${species}</span>` : ""}
-          <span id="next-watering" class="${hasNextWater ? "" : "missing"}">Prochain arrosage: ${nextWaterDisplay}</span>
+          <span id="next-watering" class="${hasNextWater ? "" : "missing"}"
+            >Prochain arrosage: ${nextWaterDisplay}</span
+          >
           ${wateringBadge
             ? html`<span class="watering-badge ${wateringBadgeClass}"
                 >${wateringBadge}</span
@@ -245,6 +247,16 @@ export default class FlowerCard extends LitElement {
           : ""}
       </ha-card>
     `;
+  }
+
+  private _openMoreInfo(entityId: string): void {
+    try {
+      moreInfo(this, entityId);
+    } catch (e) {
+      // Fail gracefully if the more-info popup can't be opened
+      // This avoids uncaught exceptions originating from external components
+      console.error("FlowerCard: failed to open more info", e);
+    }
   }
 
   async get_data(hass: HomeAssistant): Promise<void> {
