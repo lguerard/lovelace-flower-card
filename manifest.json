@@ -2,6 +2,7 @@
   "name": "Flower Card",
   "version": "2025.1.0",
   "slug": "flower-card",
+  "domain": "flower_card",
   "documentation": "https://github.com/LaurentGuerard/lovelace-flower-card",
   "repository": "https://github.com/LaurentGuerard/lovelace-flower-card",
   "dependencies": [],
