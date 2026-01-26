@@ -227,6 +227,11 @@ export const style = css`
     color: #fff;
     background: #f39c12;
     vertical-align: middle;
+    cursor: help;
+    transition: transform 0.2s ease;
+  }
+  .watering-badge:hover {
+    transform: scale(1.05);
   }
   .watering-badge.overdue {
     background: #e74c3c;
