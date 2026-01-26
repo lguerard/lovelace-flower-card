@@ -22,6 +22,20 @@ show_bars:
 - dli
 battery_sensor: sensor.demo_battery
 ```
+
+### Features
+
+* **Watering Button** 🚰  
+  Each card includes an "Arrosé" (Watered) button that calls the `plant.mark_watered` service to update your plant's watering schedule automatically.
+
+* **Next Watering Display**  
+  Shows when the plant needs to be watered next, with visual badges:
+  - 🔴 **Red**: Needs watering now
+  - 🟠 **Orange**: Needs watering within 24 hours
+
+* **Hide Empty Fields**  
+  Only displays information that is available (species, battery, attributes) - empty fields are automatically hidden.
+
 * Battery sensor
 
 You can optionally add a battery sensor to be displayed in the card.
@@ -32,6 +46,62 @@ The sensor will change color based on the state of the battery:
 * &gt;= 40%: Green
 * 20 - 39%: Orange
 * < 20%: Red
+
+## Dashboard Examples
+
+### Basic Grid View (All Plants)
+
+Display all your plants in a 2-column grid:
+
+```yaml
+type: custom:auto-entities
+filter:
+  include:
+    - domain: plant
+      options:
+        type: custom:flower-card
+        show_bars:
+          - moisture
+          - temperature
+          - brightness
+          - conductivity
+card:
+  type: grid
+  columns: 2
+  square: false
+card_param: cards
+```
+
+### Sorted by Next Watering Date
+
+Display plants sorted by watering priority (plants needing water first appear at the top):
+
+```yaml
+type: custom:auto-entities
+filter:
+  include:
+    - domain: plant
+      options:
+        type: custom:flower-card
+        show_bars:
+          - moisture
+          - temperature
+          - brightness
+          - conductivity
+sort:
+  method: attribute
+  attribute: next_watering
+  numeric: false
+  reverse: false
+card:
+  type: vertical-stack
+  title: "Plantes par ordre d'arrosage"
+card_param: cards
+```
+
+**Note**: For sorting to work, your plants must have the watering sensor enabled (automatically created by the [homeassistant-plant](https://github.com/Olen/homeassistant-plant) integration).
+
+More dashboard examples are available in the [`dashboard_examples/`](dashboard_examples/) folder.
 
 ## Dependencies
 1. Custom Plant integration (https://github.com/Olen/homeassistant-plant)
