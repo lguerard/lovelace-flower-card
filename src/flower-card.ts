@@ -315,9 +315,9 @@ export default class FlowerCard extends LitElement {
     if (!this._hass || !this.config?.entity) return;
 
     try {
-      // Call the plant integration's water service if available
-      // This resets the watering schedule for the plant
-      await this._hass.callService("plant", "water", {
+      // Call the plant integration's mark_watered service
+      // This updates the watering sensor and resets the schedule
+      await this._hass.callService("plant", "mark_watered", {
         entity_id: this.config.entity,
       });
 
@@ -338,7 +338,7 @@ export default class FlowerCard extends LitElement {
         });
       }, 500);
     } catch (err) {
-      console.error("FlowerCard: failed to call plant.water service", err);
+      console.error("FlowerCard: failed to call plant.mark_watered service", err);
       // Show error notification
       const event = new CustomEvent("hass-notification", {
         detail: {
