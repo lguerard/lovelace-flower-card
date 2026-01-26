@@ -270,7 +270,9 @@ export default class FlowerCard extends LitElement {
                 : ""}"
             ></ha-icon>
             ${wateringBadge
-              ? html`<span class="watering-badge ${wateringBadgeClass}" title="Prochain arrosage: ${nextWaterDisplay}"
+              ? html`<span
+                  class="watering-badge ${wateringBadgeClass}"
+                  title="Prochain arrosage: ${nextWaterDisplay}"
                   >${wateringBadge}</span
                 >`
               : ""}

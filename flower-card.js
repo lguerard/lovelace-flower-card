@@ -112,31 +112,30 @@
         >Waiting for interpolated entity: ${this.config.entity}</hui-warning
       >`;if(!this.stateObj){try{console.debug("FlowerCard: entity missing",{configEntity:null===(e=this.config)||void 0===e?void 0:e.entity,hassHasEntity:!!(this._hass&&(null===(i=this.config)||void 0===i?void 0:i.entity)&&this._hass.states[this.config.entity]),availableState:this._hass&&(null===(r=this.config)||void 0===r?void 0:r.entity)?this._hass.states[this.config.entity]:null})}catch(t){console.debug("FlowerCard: error logging entity debug",t)}return o.html`
         <hui-warning> Entity not available: ${this.config.entity} </hui-warning>
-      `}const s=this.stateObj.attributes.species,a=this.stateObj.attributes.next_watering||this.stateObj.attributes.next_watering_time||null;let l=null;try{this.plantinfo&&this.plantinfo.result&&this.plantinfo.result.next_watering&&(l=String(this.plantinfo.result.next_watering))}catch(t){l=null}let d=a||l;try{const t=this.findWateringSensor();t&&t.attributes&&t.attributes.next_watering&&(d=String(t.attributes.next_watering))}catch(t){}const h=!!d,m=h?this.formatNextWatering(d):"Non défini";let p=null,f="";if(d){const t=new Date(d);if(!isNaN(t.getTime())){const e=t.getTime()-Date.now();e<=0?(p="À arroser maintenant",f="overdue"):e/36e5<=24&&(p="À arroser bientôt",f="soon")}}const g=!!(null===(n=this.config)||void 0===n?void 0:n.battery_sensor)&&!!(this._hass&&this.config.battery_sensor&&this._hass.states[this.config.battery_sensor]),y=!!s,b=!!this.stateObj.attributes.entity_picture,_=(()=>{try{return!!this.plantinfo&&!!this.plantinfo.result&&Object.keys(this.plantinfo.result).length>0}catch(t){return!1}})(),v=this.config.display_type===c.DisplayType.Compact?"header-compact":"header",w=this.config.display_type===c.DisplayType.Compact?"":"card-margin-top";return o.html`
-      <ha-card class="${w}">
+      `}const s=this.stateObj.attributes.species,a=this.stateObj.attributes.next_watering||this.stateObj.attributes.next_watering_time||null;let l=null;try{this.plantinfo&&this.plantinfo.result&&this.plantinfo.result.next_watering&&(l=String(this.plantinfo.result.next_watering))}catch(t){l=null}let d=a||l;try{const t=this.findWateringSensor();t&&t.attributes&&t.attributes.next_watering&&(d=String(t.attributes.next_watering))}catch(t){}const h=d?this.formatNextWatering(d):"Non défini";let m=null,p="";if(d){const t=new Date(d);if(!isNaN(t.getTime())){const e=t.getTime()-Date.now();e<=0?(m="À arroser maintenant",p="overdue"):e/36e5<=24&&(m="À arroser bientôt",p="soon")}}const f=!!(null===(n=this.config)||void 0===n?void 0:n.battery_sensor)&&!!(this._hass&&this.config.battery_sensor&&this._hass.states[this.config.battery_sensor]),g=!!s,y=!!this.stateObj.attributes.entity_picture,b=(()=>{try{return!!this.plantinfo&&!!this.plantinfo.result&&Object.keys(this.plantinfo.result).length>0}catch(t){return!1}})(),_=this.config.display_type===c.DisplayType.Compact?"header-compact":"header",v=this.config.display_type===c.DisplayType.Compact?"":"card-margin-top";return o.html`
+      <ha-card class="${v}">
         <div
-          class="${v}"
+          class="${_}"
           @click="${()=>this._openMoreInfo(this.stateObj.entity_id)}"
         >
-          ${b?o.html`<img src="${this.stateObj.attributes.entity_picture}" />`:""}
+          ${y?o.html`<img src="${this.stateObj.attributes.entity_picture}" />`:""}
 
           <span id="name">
             ${this.stateObj.attributes.friendly_name}
             <ha-icon
               .icon="mdi:${"problem"==this.stateObj.state.toLowerCase()?"alert-circle-outline":""}"
             ></ha-icon>
-            ${p?o.html`<span class="watering-badge ${f}"
-                  >${p}</span
+            ${m?o.html`<span
+                  class="watering-badge ${p}"
+                  title="Prochain arrosage: ${h}"
+                  >${m}</span
                 >`:""}
           </span>
 
-          ${g?o.html`<span id="battery">${(0,u.renderBattery)(this)}</span>`:""}
-          ${y?o.html`<span id="species">${s}</span>`:""}
-          <span id="next-watering" class="${h?"":"missing"}">
-            Prochain arrosage: ${m}
-          </span>
+          ${f?o.html`<span id="battery">${(0,u.renderBattery)(this)}</span>`:""}
+          ${g?o.html`<span id="species">${s}</span>`:""}
         </div>
-        ${_?o.html`<div class="divider"></div>
+        ${b?o.html`<div class="divider"></div>
               ${(0,u.renderAttributes)(this)}`:""}
         <div class="water-button-container">
           <button
@@ -149,7 +148,7 @@
           </button>
         </div>
       </ha-card>
-    `}_openMoreInfo(t){try{(0,h.moreInfo)(this,t)}catch(t){console.error("FlowerCard: failed to open more info",t)}}_handleWaterClick(t){return n(this,void 0,void 0,(function*(){var e,i;if(t.stopPropagation(),this._hass&&(null===(e=this.config)||void 0===e?void 0:e.entity))try{yield this._hass.callService("plant","mark_watered",{entity_id:this.config.entity});const t=new CustomEvent("hass-notification",{detail:{message:`${(null===(i=this.stateObj)||void 0===i?void 0:i.attributes.friendly_name)||"Plante"} marquée comme arrosée`},bubbles:!0,composed:!0});this.dispatchEvent(t),setTimeout((()=>{this.get_data(this._hass).then((()=>{this.requestUpdate()}))}),500)}catch(t){console.error("FlowerCard: failed to call plant.mark_watered service",t);const e=new CustomEvent("hass-notification",{detail:{message:`Erreur lors de l'arrosage: ${t}`},bubbles:!0,composed:!0});this.dispatchEvent(e)}}))}get_data(t){return n(this,void 0,void 0,(function*(){var e;try{this.plantinfo=yield t.callWS({type:"plant/get_info",entity_id:null===(e=this.config)||void 0===e?void 0:e.entity})}catch(t){this.plantinfo={result:{}}}}))}formatNextWatering(t){var e,i;try{const r=new Date(t);if(isNaN(r.getTime()))return t;const n=new Date,o=r.getTime()-n.getTime(),s=Math.round(o/1e3),a=Math.round(s/60),c=Math.round(a/60),l=Math.round(c/24);if(Math.abs(l)<7&&"undefined"!=typeof Intl&&Intl.RelativeTimeFormat){const t=new Intl.RelativeTimeFormat((null===(e=this._hass)||void 0===e?void 0:e.language)||navigator.language,{numeric:"auto"});return Math.abs(l)>=1?t.format(l,"day"):Math.abs(c)>=1?t.format(c,"hour"):Math.abs(a)>=1?t.format(a,"minute"):t.format(s,"second")}return r.toLocaleString((null===(i=this._hass)||void 0===i?void 0:i.language)||void 0)}catch(e){return t}}findWateringSensor(){var t;if(!this._hass||!(null===(t=this.config)||void 0===t?void 0:t.entity))return null;const e=this.config.entity.split(".")[1];if(!e)return null;const i=[`sensor.${e}_watering`,`sensor.${e}watering`,`sensor.${e}_water`,`sensor.${e}_watering_sensor`];for(const t of i){const e=this._hass.states[t];if(e&&e.attributes&&e.attributes.next_watering)return e}const r=e.replace(/[_-]/g," ").toLowerCase();for(const[t,i]of Object.entries(this._hass.states)){if(!t.startsWith("sensor."))continue;const n=i;if(n&&n.attributes&&n.attributes.next_watering&&((n.attributes.friendly_name||"").toLowerCase().includes(r)||t.includes(e)))return n}return null}getCardSize(){return 5}static get styles(){return a.style}};r([(0,s.property)()],m.prototype,"_hass",void 0),r([(0,s.property)()],m.prototype,"config",void 0),m=r([(0,s.customElement)(d.CARD_NAME)],m),e.default=m},800:(t,e,i)=>{Object.defineProperty(e,"__esModule",{value:!0}),e.style=void 0;const r=i(161);e.style=r.css`
+    `}_openMoreInfo(t){try{(0,h.moreInfo)(this,t)}catch(t){console.error("FlowerCard: failed to open more info",t)}}_handleWaterClick(t){return n(this,void 0,void 0,(function*(){var e,i;if(t.stopPropagation(),this._hass&&(null===(e=this.config)||void 0===e?void 0:e.entity))try{yield this._hass.callService("plant","mark_watered",{entity_id:this.config.entity});const t=new CustomEvent("hass-notification",{detail:{message:`${(null===(i=this.stateObj)||void 0===i?void 0:i.attributes.friendly_name)||"Plante"} marquée comme arrosée`},bubbles:!0,composed:!0});this.dispatchEvent(t),setTimeout((()=>{this.get_data(this._hass).then((()=>{this.requestUpdate()}))}),500)}catch(t){console.error("FlowerCard: failed to call plant.mark_watered service",t);const e=new CustomEvent("hass-notification",{detail:{message:`Erreur lors de l'arrosage: ${t}`},bubbles:!0,composed:!0});this.dispatchEvent(e)}}))}get_data(t){return n(this,void 0,void 0,(function*(){var e;try{this.plantinfo=yield t.callWS({type:"plant/get_info",entity_id:null===(e=this.config)||void 0===e?void 0:e.entity})}catch(t){this.plantinfo={result:{}}}}))}formatNextWatering(t){var e,i;try{const r=new Date(t);if(isNaN(r.getTime()))return t;const n=new Date,o=r.getTime()-n.getTime(),s=Math.round(o/1e3),a=Math.round(s/60),c=Math.round(a/60),l=Math.round(c/24);if(o<=0)return"maintenant";if(Math.abs(l)<7&&"undefined"!=typeof Intl&&Intl.RelativeTimeFormat){const t=new Intl.RelativeTimeFormat((null===(e=this._hass)||void 0===e?void 0:e.language)||navigator.language,{numeric:"auto"});return Math.abs(l)>=1?t.format(l,"day"):Math.abs(c)>=1?t.format(c,"hour"):Math.abs(a)>=1?t.format(a,"minute"):t.format(s,"second")}return r.toLocaleString((null===(i=this._hass)||void 0===i?void 0:i.language)||void 0)}catch(e){return t}}findWateringSensor(){var t;if(!this._hass||!(null===(t=this.config)||void 0===t?void 0:t.entity))return null;const e=this.config.entity.split(".")[1];if(!e)return null;const i=[`sensor.${e}_watering`,`sensor.${e}watering`,`sensor.${e}_water`,`sensor.${e}_watering_sensor`];for(const t of i){const e=this._hass.states[t];if(e&&e.attributes&&e.attributes.next_watering)return e}const r=e.replace(/[_-]/g," ").toLowerCase();for(const[t,i]of Object.entries(this._hass.states)){if(!t.startsWith("sensor."))continue;const n=i;if(n&&n.attributes&&n.attributes.next_watering&&((n.attributes.friendly_name||"").toLowerCase().includes(r)||t.includes(e)))return n}return null}getCardSize(){return 5}static get styles(){return a.style}};r([(0,s.property)()],m.prototype,"_hass",void 0),r([(0,s.property)()],m.prototype,"config",void 0),m=r([(0,s.customElement)(d.CARD_NAME)],m),e.default=m},800:(t,e,i)=>{Object.defineProperty(e,"__esModule",{value:!0}),e.style=void 0;const r=i(161);e.style=r.css`
   .card-margin-top {
     margin-top: 32px;
   }
@@ -376,6 +375,11 @@
     color: #fff;
     background: #f39c12;
     vertical-align: middle;
+    cursor: help;
+    transition: transform 0.2s ease;
+  }
+  .watering-badge:hover {
+    transform: scale(1.05);
   }
   .watering-badge.overdue {
     background: #e74c3c;
@@ -426,7 +430,7 @@
       <div class="tip" style="text-align:center;">${i}%</div>
       <ha-icon .icon="${r}" style="color: ${o}"></ha-icon>
     </div>
-  `},e.renderAttributes=t=>{const i={},r={},n={},o={},a={},c={},l={},u=t.config.show_bars||s.default_show_bars;if(t.plantinfo&&t.plantinfo.result){const e=t.plantinfo.result;for(const s of u)if(e[s]){let{max:u,min:d,current:h,icon:m,sensor:p,unit_of_measurement:f}=e[s];if(u=Number(u),d=Number(d),m=String(m),p=String(p),h=Number(h),!p||"undefined"===p||!t._hass.states[p])continue;if(null==h||isNaN(h))continue;const g=t._hass.formatEntityState(t._hass.states[p]).replace(/[^\d,.]/g,"");f=String(f),o[`max_${s}`]={max:u,min:d},a[s]=h,i[s]=m,c[s]=p,n[s]=f,r[s]=f,"dli"===s&&(n.dli="mol/d⋅m²",r.dli='<math style="display: inline-grid;" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mrow><mn>mol</mn></mrow><mrow><mn>d</mn><mn>⋅</mn><msup><mn>m</mn><mn>2</mn></msup></mrow></mfrac></mrow></math>'),l[s]={name:s,current:h,limits:o[`max_${s}`],icon:m,sensor:p,unit_of_measurement:f,display_state:g}}}return(0,e.renderAttributeChunks)(t,l)},e.renderAttribute=(t,e)=>{const{max:i,min:s}=e.limits,c=e.unit_of_measurement,l="lx"===e.unit_of_measurement,u=e.icon||"mdi:help-circle-outline",d=e.current||0,h=!isNaN(d),m=e.display_state,p=l?100*Math.max(0,Math.min(1,(Math.log(d)-Math.log(s))/(Math.log(i)-Math.log(s)))):100*Math.max(0,Math.min(1,(d-s)/(i-s))),f=h?`${e.name}: ${d} ${c}<br>(${s} ~ ${i} ${c})`:t._hass.localize("state.default.unavailable"),g="dli"===e.name?'<math style="display: inline-grid;" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mrow><mn>mol</mn></mrow><mrow><mn>d</mn><mn>⋅</mn><msup><mn>m</mn><mn>2</mn></msup></mrow></mfrac></mrow></math>':c,y="attribute tooltip "+(t.config.display_type===r.DisplayType.Compact?"width-100":"");return n.html`
+  `},e.renderAttributes=t=>{var i;const r={},n={},o={},a={},c={},l={},u={},d=t.config.show_bars||s.default_show_bars;if(t.plantinfo&&t.plantinfo.result){const e=t.plantinfo.result;for(const s of d)if(e[s]){let{max:d,min:h,current:m,icon:p,sensor:f,unit_of_measurement:g}=e[s];if(console.debug(`FlowerCard attribute ${s}:`,{sensor:f,current:m,sensorExists:!!t._hass.states[f],sensorValue:null===(i=t._hass.states[f])||void 0===i?void 0:i.state}),!f||"undefined"===f||!t._hass.states[f]){console.debug("  → Skipped: sensor missing or undefined");continue}if(null==m||void 0===m){console.debug("  → Skipped: current value is null/undefined");continue}if(d=Number(d),h=Number(h),p=String(p),f=String(f),m=Number(m),isNaN(m)){console.debug("  → Skipped: current value is NaN after conversion");continue}console.debug("  → Displayed");const y=t._hass.formatEntityState(t._hass.states[f]).replace(/[^\d,.]/g,"");g=String(g),a[`max_${s}`]={max:d,min:h},c[s]=m,r[s]=p,l[s]=f,o[s]=g,n[s]=g,"dli"===s&&(o.dli="mol/d⋅m²",n.dli='<math style="display: inline-grid;" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mrow><mn>mol</mn></mrow><mrow><mn>d</mn><mn>⋅</mn><msup><mn>m</mn><mn>2</mn></msup></mrow></mfrac></mrow></math>'),u[s]={name:s,current:m,limits:a[`max_${s}`],icon:p,sensor:f,unit_of_measurement:g,display_state:y}}}return(0,e.renderAttributeChunks)(t,u)},e.renderAttribute=(t,e)=>{const{max:i,min:s}=e.limits,c=e.unit_of_measurement,l="lx"===e.unit_of_measurement,u=e.icon||"mdi:help-circle-outline",d=e.current||0,h=!isNaN(d),m=e.display_state,p=l?100*Math.max(0,Math.min(1,(Math.log(d)-Math.log(s))/(Math.log(i)-Math.log(s)))):100*Math.max(0,Math.min(1,(d-s)/(i-s))),f=h?`${e.name}: ${d} ${c}<br>(${s} ~ ${i} ${c})`:t._hass.localize("state.default.unavailable"),g="dli"===e.name?'<math style="display: inline-grid;" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mrow><mn>mol</mn></mrow><mrow><mn>d</mn><mn>⋅</mn><msup><mn>m</mn><mn>2</mn></msup></mrow></mfrac></mrow></math>':c,y="attribute tooltip "+(t.config.display_type===r.DisplayType.Compact?"width-100":"");return n.html`
     <div
       class="${y}"
       @click="${()=>(0,a.moreInfo)(t,e.sensor)}"
