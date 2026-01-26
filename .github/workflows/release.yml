@@ -11,7 +11,7 @@ on:
   # Trigger when a tag is created (useful for test tags or direct releases)
   create:
     tags:
-      - 'v*'
+      - "v*"
   # Allow manual runs from the Actions UI
   workflow_dispatch:
 
