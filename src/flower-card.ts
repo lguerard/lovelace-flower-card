@@ -380,6 +380,11 @@ export default class FlowerCard extends LitElement {
       const diffHour = Math.round(diffMin / 60);
       const diffDay = Math.round(diffHour / 24);
 
+      // If date is in the past, show "maintenant" instead of "il y a X"
+      if (diffMs <= 0) {
+        return "maintenant";
+      }
+
       // use relative format for near dates
       if (
         Math.abs(diffDay) < 7 &&

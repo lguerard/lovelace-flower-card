@@ -75,18 +75,22 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
       if (result[elem]) {
         let { max, min, current, icon, sensor, unit_of_measurement } =
           result[elem];
+        // Skip attributes if sensor is not defined or sensor doesn't exist in hass
+        if (!sensor || sensor === "undefined" || !card._hass.states[sensor]) {
+          continue;
+        }
+        // Skip if current value is null/undefined before Number conversion
+        // This preserves valid 0 values (0°C, 0%, etc.)
+        if (current == null || current === undefined) {
+          continue;
+        }
         max = Number(max);
         min = Number(min);
         icon = String(icon);
         sensor = String(sensor);
         current = Number(current);
-        // Skip attributes if sensor is not defined or sensor doesn't exist in hass
-        // Don't skip on 0 value (temperature can be 0°C, humidity can be 0%)
-        if (!sensor || sensor === "undefined" || !card._hass.states[sensor]) {
-          continue;
-        }
-        // Skip if current value is null/undefined/NaN but keep 0 as valid
-        if (current == null || isNaN(current)) {
+        // After conversion, check for NaN but keep 0
+        if (isNaN(current)) {
           continue;
         }
         const display_state = card._hass
