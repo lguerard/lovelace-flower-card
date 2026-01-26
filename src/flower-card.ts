@@ -42,6 +42,10 @@ export default class FlowerCard extends LitElement {
 
   private stateObj: HomeAssistantEntity | undefined;
   private previousFetchDate: number;
+  // When cards like `auto-entities` inject a templated entity string
+  // (eg. "{{entity}}") the card may be instantiated before interpolation.
+  // Track that we've seen a templated entity so we avoid spamming debug logs.
+  private templateEntityDetected = false;
 
   plantinfo: PlantInfo;
   set hass(hass: HomeAssistant) {
@@ -111,6 +115,26 @@ export default class FlowerCard extends LitElement {
 
   render(): HTMLTemplateResult {
     if (!this.config || !this._hass) return html``;
+
+    // If the configured entity contains a template marker (eg. "{{entity}}")
+    // it means another component (like `auto-entities`) should interpolate
+    // it. In that unresolved state we must not spam the console with repeated
+    // missing-entity debug lines — show a friendly waiting message instead.
+    if (this.config?.entity && this.config.entity.includes("{{")) {
+      if (!this.templateEntityDetected) {
+        this.templateEntityDetected = true;
+        console.debug(
+          "FlowerCard: entity template detected (awaiting interpolation)",
+          {
+            configEntity: this.config.entity,
+          },
+        );
+      }
+
+      return html`<hui-warning
+        >Waiting for interpolated entity: ${this.config.entity}</hui-warning
+      >`;
+    }
 
     if (!this.stateObj) {
       // Debug logging to help diagnose auto-entities / grid issues where
@@ -251,14 +275,22 @@ export default class FlowerCard extends LitElement {
             ? html`<span id="battery">${renderBattery(this)}</span>`
             : ""}
           ${hasSpecies ? html`<span id="species">${species}</span>` : ""}
-          <span id="next-watering" class="${hasNextWater ? "" : "missing"}"
-            >Prochain arrosage: ${nextWaterDisplay}</span
-          >
+          <span id="next-watering" class="${hasNextWater ? "" : "missing"}">
+            Prochain arrosage: ${nextWaterDisplay}
+          </span>
           ${wateringBadge
             ? html`<span class="watering-badge ${wateringBadgeClass}"
                 >${wateringBadge}</span
               >`
             : ""}
+          <button
+            class="water-button"
+            @click="${(e: Event) => this._handleWaterClick(e)}"
+            title="Marquer comme arrosé"
+          >
+            <ha-icon icon="mdi:watering-can"></ha-icon>
+            Arrosé
+          </button>
         </div>
         ${attributesPresent
           ? html`<div class="divider"></div>
@@ -275,6 +307,47 @@ export default class FlowerCard extends LitElement {
       // Fail gracefully if the more-info popup can't be opened
       // This avoids uncaught exceptions originating from external components
       console.error("FlowerCard: failed to open more info", e);
+    }
+  }
+
+  private async _handleWaterClick(e: Event): Promise<void> {
+    e.stopPropagation();
+    if (!this._hass || !this.config?.entity) return;
+
+    try {
+      // Call the plant integration's water service if available
+      // This resets the watering schedule for the plant
+      await this._hass.callService("plant", "water", {
+        entity_id: this.config.entity,
+      });
+
+      // Show a toast notification
+      const event = new CustomEvent("hass-notification", {
+        detail: {
+          message: `${this.stateObj?.attributes.friendly_name || "Plante"} marquée comme arrosée`,
+        },
+        bubbles: true,
+        composed: true,
+      });
+      this.dispatchEvent(event);
+
+      // Force refresh after a short delay
+      setTimeout(() => {
+        this.get_data(this._hass).then(() => {
+          this.requestUpdate();
+        });
+      }, 500);
+    } catch (err) {
+      console.error("FlowerCard: failed to call plant.water service", err);
+      // Show error notification
+      const event = new CustomEvent("hass-notification", {
+        detail: {
+          message: `Erreur lors de l'arrosage: ${err}`,
+        },
+        bubbles: true,
+        composed: true,
+      });
+      this.dispatchEvent(event);
     }
   }
 
