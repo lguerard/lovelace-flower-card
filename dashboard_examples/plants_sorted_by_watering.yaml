@@ -3,81 +3,80 @@
 
 title: Mes Plantes - Arrosage
 views:
-  - title: Arrosage
-    path: watering
-    icon: mdi:watering-can
-    cards:
-      # Utilise auto-entities avec tri par attribut next_watering
-      - type: custom:auto-entities
-        filter:
-          include:
-            - domain: plant
-              options:
-                type: custom:flower-card
-                show_bars:
-                  - moisture
-                  - temperature
-                  - brightness
-                  - conductivity
-        sort:
-          # Tri par l'attribut next_watering (ISO timestamp)
-          # Les plantes à arroser en premier apparaissent en haut
-          method: attribute
-          attribute: next_watering
-          numeric: false
-          reverse: false
-          # ignore_case n'est pas nécessaire pour les timestamps
-        card:
-          type: grid
-          columns: 2
-          square: false
-        card_param: cards
-        show_empty: true
+- title: Arrosage
+  path: watering
+  icon: mdi:watering-can
+  cards:
+  # Utilise auto-entities avec tri par attribut next_watering
+  - type: custom:auto-entities
+    filter:
+      include:
+      - domain: plant
+        options:
+          type: custom:flower-card
+          show_bars:
+          - moisture
+          - temperature
+          - brightness
+          - conductivity
+    sort:
+      # Tri par l'attribut next_watering (ISO timestamp)
+      # Les plantes à arroser en premier apparaissent en haut
+      method: attribute
+      attribute: next_watering
+      numeric: false
+      reverse: false
+      # ignore_case n'est pas nécessaire pour les timestamps
+    card:
+      type: grid
+      columns: 2
+      square: false
+    card_param: cards
+    show_empty: true
 
-      # Alternative: Affichage en liste verticale (meilleur pour le tri chronologique)
-      - type: custom:auto-entities
-        filter:
-          include:
-            - domain: plant
-              options:
-                type: custom:flower-card
-                show_bars:
-                  - moisture
-                  - temperature
-                  - brightness
-                  - conductivity
-        sort:
-          method: attribute
-          attribute: next_watering
-          numeric: false
-          reverse: false
-        card:
-          type: vertical-stack
-          title: "Plantes par ordre d'arrosage"
-        card_param: cards
-        show_empty: true
-
-      # Option avancée: tri manuel en utilisant un template sensor
-      # (nécessite de créer un sensor.plant_watering_order via configuration.yaml)
-      # Uncomment si tu veux un tri plus sophistiqué :
-      # - type: custom:auto-entities
-      #   filter:
-      #     include:
-      #       - domain: plant
-      #         options:
-      #           type: custom:flower-card
-      #           show_bars:
-      #             - moisture
-      #             - temperature
-      #             - brightness
-      #             - conductivity
-      #   sort:
-      #     method: state
-      #     # Tri par le sensor watering correspondant (sensor.<nom>_watering)
-      #     # Ce sensor contient les heures jusqu'au prochain arrosage
-      #     numeric: true
-      #     reverse: false
-      #   card:
-      #     type: grid
-      #     columns: 2
-      #   card_param: cards
+  # Alternative: Affichage en liste verticale (meilleur pour le tri chronologique)
+  - type: custom:auto-entities
+    filter:
+      include:
+      - domain: plant
+        options:
+          type: custom:flower-card
+          show_bars:
+          - moisture
+          - temperature
+          - brightness
+          - conductivity
+    sort:
+      method: attribute
+      attribute: next_watering
+      numeric: false
+      reverse: false
+    card:
+      type: vertical-stack
+      title: "Plantes par ordre d'arrosage"
+    card_param: cards
+    show_empty: true
+  # Option avancée: tri manuel en utilisant un template sensor
+  # (nécessite de créer un sensor.plant_watering_order via configuration.yaml)
+  # Uncomment si tu veux un tri plus sophistiqué :
+  # - type: custom:auto-entities
+  #   filter:
+  #     include:
+  #       - domain: plant
+  #         options:
+  #           type: custom:flower-card
+  #           show_bars:
+  #             - moisture
+  #             - temperature
+  #             - brightness
+  #             - conductivity
+  #   sort:
+  #     method: state
+  #     # Tri par le sensor watering correspondant (sensor.<nom>_watering)
+  #     # Ce sensor contient les heures jusqu'au prochain arrosage
+  #     numeric: true
+  #     reverse: false
+  #   card:
+  #     type: grid
+  #     columns: 2
+  #   card_param: cards

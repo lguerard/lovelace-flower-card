@@ -235,7 +235,7 @@ export const style = css`
   .watering-badge.soon {
     background: #f39c12;
   }
-  
+
   /* Water button styling */
   .water-button {
     display: inline-flex;

@@ -338,7 +338,10 @@ export default class FlowerCard extends LitElement {
         });
       }, 500);
     } catch (err) {
-      console.error("FlowerCard: failed to call plant.mark_watered service", err);
+      console.error(
+        "FlowerCard: failed to call plant.mark_watered service",
+        err,
+      );
       // Show error notification
       const event = new CustomEvent("hass-notification", {
         detail: {

@@ -25,15 +25,15 @@ battery_sensor: sensor.demo_battery
 
 ### Features
 
-* **Watering Button** 🚰  
+* **Watering Button** 🚰
   Each card includes an "Arrosé" (Watered) button that calls the `plant.mark_watered` service to update your plant's watering schedule automatically.
 
-* **Next Watering Display**  
+* **Next Watering Display**
   Shows when the plant needs to be watered next, with visual badges:
   - 🔴 **Red**: Needs watering now
   - 🟠 **Orange**: Needs watering within 24 hours
 
-* **Hide Empty Fields**  
+* **Hide Empty Fields**
   Only displays information that is available (species, battery, attributes) - empty fields are automatically hidden.
 
 * Battery sensor
@@ -121,10 +121,10 @@ This can be installed manually or through HACS
 * You should not need to restart Home Assistant, but will probably need to refresh the frontend and/or "shift-reload" to refresh the browser cache.
 
 ### Manual Installation
-1: Download the file flower-card.js and add it to somewhere in your `<config>/www/` folder in HA 
- 
+1: Download the file flower-card.js and add it to somewhere in your `<config>/www/` folder in HA
+
 2: Click your profile picture in the bottom left corner -> Turn on Advanced Mode.
- 
+
 3: Go to Configuration -> Lovelace Dashboards -> Resources -> press the + (lower right corner of screen) and add the following information:
 
 ```yaml
@@ -142,5 +142,5 @@ This can be installed manually or through HACS
 I looked into several forks of the original card https://github.com/thomasloven/lovelace-flower-card. Some forks were very interesting and I edited several of those source codes changes into my own new fork. Credits to those original authors. After version 3.0.0 the card was more or less completely rewritten, and only the design and layout of the original card has been kept.
 
 <a href="https://www.buymeacoffee.com/olatho" target="_blank">
-<img src="https://user-images.githubusercontent.com/203184/184674974-db7b9e53-8c5a-40a0-bf71-c01311b36b0a.png" style="height: 50px !important;"> 
+<img src="https://user-images.githubusercontent.com/203184/184674974-db7b9e53-8c5a-40a0-bf71-c01311b36b0a.png" style="height: 50px !important;">
 </a>
