@@ -75,13 +75,22 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
       if (result[elem]) {
         let { max, min, current, icon, sensor, unit_of_measurement } =
           result[elem];
+        // Debug logging for attributes
+        console.debug(`FlowerCard attribute ${elem}:`, {
+          sensor,
+          current,
+          sensorExists: !!card._hass.states[sensor],
+          sensorValue: card._hass.states[sensor]?.state,
+        });
         // Skip attributes if sensor is not defined or sensor doesn't exist in hass
         if (!sensor || sensor === "undefined" || !card._hass.states[sensor]) {
+          console.debug(`  → Skipped: sensor missing or undefined`);
           continue;
         }
         // Skip if current value is null/undefined before Number conversion
         // This preserves valid 0 values (0°C, 0%, etc.)
         if (current == null || current === undefined) {
+          console.debug(`  → Skipped: current value is null/undefined`);
           continue;
         }
         max = Number(max);
@@ -91,8 +100,10 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
         current = Number(current);
         // After conversion, check for NaN but keep 0
         if (isNaN(current)) {
+          console.debug(`  → Skipped: current value is NaN after conversion`);
           continue;
         }
+        console.debug(`  → Displayed`);
         const display_state = card._hass
           .formatEntityState(card._hass.states[sensor])
           .replace(/[^\d,.]/g, "");
