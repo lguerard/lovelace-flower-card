@@ -269,6 +269,11 @@ export default class FlowerCard extends LitElement {
                 ? "alert-circle-outline"
                 : ""}"
             ></ha-icon>
+            ${wateringBadge
+              ? html`<span class="watering-badge ${wateringBadgeClass}"
+                  >${wateringBadge}</span
+                >`
+              : ""}
           </span>
 
           ${hasBattery
@@ -278,11 +283,12 @@ export default class FlowerCard extends LitElement {
           <span id="next-watering" class="${hasNextWater ? "" : "missing"}">
             Prochain arrosage: ${nextWaterDisplay}
           </span>
-          ${wateringBadge
-            ? html`<span class="watering-badge ${wateringBadgeClass}"
-                >${wateringBadge}</span
-              >`
-            : ""}
+        </div>
+        ${attributesPresent
+          ? html`<div class="divider"></div>
+              ${renderAttributes(this)}`
+          : ""}
+        <div class="water-button-container">
           <button
             class="water-button"
             @click="${(e: Event) => this._handleWaterClick(e)}"
@@ -292,10 +298,6 @@ export default class FlowerCard extends LitElement {
             Arrosé
           </button>
         </div>
-        ${attributesPresent
-          ? html`<div class="divider"></div>
-              ${renderAttributes(this)}`
-          : ""}
       </ha-card>
     `;
   }

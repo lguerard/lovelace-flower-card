@@ -218,16 +218,15 @@ export const style = css`
     color: var(--secondary-text-color, #8c96a5);
   }
   .watering-badge {
-    display: block;
-    margin-top: 6px;
+    display: inline-block;
+    margin-left: 10px;
     padding: 4px 10px;
     border-radius: 12px;
-    font-size: 0.8em;
+    font-size: 0.75em;
     font-weight: 500;
     color: #fff;
     background: #f39c12;
-    width: fit-content;
-    margin-left: 0;
+    vertical-align: middle;
   }
   .watering-badge.overdue {
     background: #e74c3c;
@@ -237,17 +236,22 @@ export const style = css`
   }
 
   /* Water button styling */
+  .water-button-container {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid rgba(114, 114, 114, 0.25);
+  }
   .water-button {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 8px;
-    padding: 6px 12px;
+    padding: 8px 16px;
     border: none;
     border-radius: 16px;
     background: var(--primary-color, #03a9f4);
     color: #fff;
-    font-size: 0.85em;
+    font-size: 0.9em;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
