@@ -1,10 +1,27 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
 import { HassEntity } from "home-assistant-js-websocket";
 
+export interface ExtraBadge {
+    entity?: string;      // Entity ID for sensor/binary_sensor
+    attribute?: string;   // Entity attribute to display instead of state (e.g., "last_changed")
+    icon?: string;        // Icon to display (default: entity's icon or mdi:information)
+    color?: string;       // Color for regular sensors/text
+    color_on?: string;    // Color when binary_sensor is "on" (default: green)
+    color_off?: string;   // Color when binary_sensor is "off" (default: grey)
+    text?: string;        // Static text to display (alternative to entity)
+    show_state?: boolean; // Show state value next to icon (default: false)
+}
+
 export interface FlowerCardConfig extends LovelaceCardConfig {
     entity?: string;
     battery_sensor?: string;
     display_type?: DisplayType;
+    hide_units?: boolean;      // Hide value/unit next to bars (default: false for full, true for compact)
+    bars_per_row?: number;     // Number of bars per row: 1 or 2 (default: 2 for full, 1 for compact)
+    name?: string;
+    hide_species?: boolean;
+    hide_image?: boolean;
+    extra_badges?: ExtraBadge[];
 }
 
 export enum DisplayType {

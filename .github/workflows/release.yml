@@ -2,152 +2,153 @@
 name: "Auto Release"
 
 on:
-  push:
-    branches:
-      - "main"
-      - "master"
-    paths:
-      - "package.json"
-  # Trigger when a tag is created (useful for test tags or direct releases)
-  create:
-    tags:
-      - "v*"
-  # Allow manual runs from the Actions UI
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Test & Lint"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  build:
-    name: "Build Release"
+  release:
+    name: "Create Release"
     runs-on: "ubuntu-latest"
+    # Only run if Test & Lint succeeded
+    if: github.event.workflow_run.conclusion == 'success'
     steps:
       - name: "✏️ Checkout code"
         uses: actions/checkout@v4
         with:
-          path: "./"
-      - name: "🏷️ Get version tag"
-        id: set_var
-        run: echo "COMPONENT_VERSION=$(grep version package.json | cut -d ":" -f 2 | sed -e 's/[^0-9\.beta\-]//g')" >> $GITHUB_ENV
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: "🏷️ Check if tag exists already"
-        uses: mukunku/tag-exists-action@v1.4.0
-        id: "check_tag"
-        with:
-          tag: "v${{ env.COMPONENT_VERSION }}"
-
-      - name: "❌ Cancel if tag is already present"
+      - name: "📋 Check if package.json changed"
+        id: check_package
         run: |
-          echo "Tag already present: v${{ env.COMPONENT_VERSION }}. Not creating a new release"
-          gh run cancel ${{ github.run_id }}
-          gh run watch ${{ github.run_id }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: steps.check_tag.outputs.exists == 'true'
-
-      - name: "👷 Build using Node.js"
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20.x"
-      - run: npm install
-      - run: npm ci
-      - run: npm run build --if-present
-
-      - name: "📁 Prepare web assets"
-        run: |
-          mkdir -p www/community
-          cp flower-card.js www/community/flower-card.js
-          # copy gz if present
-          cp flower-card.js.gz www/community/flower-card.js.gz || true
-
-      - name: "📝 Commit files"
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add flower-card.js
-          git add flower-card.js.gz || true
-          git add www/community/flower-card.js || true
-          git add www/community/flower-card.js.gz || true
-          git status
-          git commit -m "Add new build" -a || echo "No changes to commit"
-      - name: "⬆️ Push changes"
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-  auto-release:
-    name: "Auto Release"
-    runs-on: "ubuntu-latest"
-    needs: build
-    steps:
-      - name: "⬇️ Checkout new code"
-        uses: actions/checkout@v4
-        with:
-          ref: master
-          path: "./"
+          BEFORE_SHA=$(git rev-parse HEAD~1 2>/dev/null || echo "")
+          if [ -z "$BEFORE_SHA" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            CHANGED=$(git diff --name-only $BEFORE_SHA HEAD -- 'package.json' | wc -l)
+            if [ "$CHANGED" -gt 0 ]; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          fi
 
       - name: "🏷️ Get version tag"
         id: set_var
-        run: echo "COMPONENT_VERSION=$(grep version package.json | cut -d ":" -f 2 | sed -e 's/[^0-9\.beta\-]//g')" >> $GITHUB_ENV
-
-      - name: "🏷️ Get git sha"
-        id: set_var_2
-        run: echo "CURRENT_SHA=$(git log -1 --format='%H')" >> $GITHUB_ENV
+        run: echo "COMPONENT_VERSION=$(grep version package.json | cut -d ':' -f 2 | sed -e 's/[^0-9\.beta\-]//g')" >> $GITHUB_ENV
+        if: steps.check_package.outputs.changed == 'true'
 
       - name: "🏷️ Check if tag exists already"
-        uses: mukunku/tag-exists-action@v1.4.0
+        uses: mukunku/tag-exists-action@v1.6.0
         id: "check_tag"
         with:
           tag: "v${{ env.COMPONENT_VERSION }}"
+        if: steps.check_package.outputs.changed == 'true'
 
-      - name: "❌ Cancel if tag is already present"
+      - name: "⏭️ Skip if no package change or tag exists"
+        run: echo "Skipping release - package.json unchanged or tag already exists"
+        if: steps.check_package.outputs.changed != 'true' || steps.check_tag.outputs.exists == 'true'
+
+      - name: "📦 Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true'
+
+      - name: "📥 Install dependencies"
+        run: npm ci
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true'
+
+      - name: "🔨 Build"
+        run: npm run build
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true'
+
+      - name: "📝 Check if build output changed"
+        id: check_build
         run: |
-          echo "Tag already present: v${{ env.COMPONENT_VERSION }}. Not creating a new release"
-          gh run cancel ${{ github.run_id }}
-          gh run watch ${{ github.run_id }}
+          if git diff --quiet flower-card.js flower-card.js.gz; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true'
+
+      - name: "🔀 Create PR with built files"
+        run: |
+          BRANCH_NAME="build/v${{ env.COMPONENT_VERSION }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH_NAME"
+          git add flower-card.js flower-card.js.gz
+          git commit -m "Build flower-card.js for v${{ env.COMPONENT_VERSION }} [skip ci]"
+          git push origin "$BRANCH_NAME"
+          gh pr create --title "Build flower-card.js for v${{ env.COMPONENT_VERSION }}" \
+            --body "Auto-generated PR to update built files for release v${{ env.COMPONENT_VERSION }}
+
+          [skip ci]" \
+            --base main \
+            --head "$BRANCH_NAME"
+          gh pr merge "$BRANCH_NAME" --merge --admin --delete-branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: steps.check_tag.outputs.exists == 'true'
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true' && steps.check_build.outputs.changed == 'true'
 
       - name: "🗝️ Get previous release version"
         id: last_release
-        uses: InsonusK/get-latest-release@v1.1.0
-        with:
-          myToken: ${{ github.token }}
-          exclude_types: "draft|prerelease"
+        run: |
+          LAST_TAG=$(gh release list --exclude-drafts --exclude-pre-releases --limit 1 --json tagName --jq '.[0].tagName // empty')
+          echo "tag_name=${LAST_TAG}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true'
 
       - name: "🏷️ Create new tag"
         uses: rickstaa/action-create-tag@v1
         id: "tag_create"
         with:
           tag: "v${{ env.COMPONENT_VERSION }}"
-          commit_sha: "${{ env.CURRENT_SHA }}"
           tag_exists_error: false
           message: "Version ${{ env.COMPONENT_VERSION }}"
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true'
 
       - name: "🗒️ Generate release changelog"
         id: changelog
-        uses: heinrichreimer/github-changelog-generator-action@v2.3
+        uses: heinrichreimer/github-changelog-generator-action@v2.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           sinceTag: ${{ steps.last_release.outputs.tag_name }}
           headerLabel: "# Notable changes since ${{ steps.last_release.outputs.tag_name }}"
           stripGeneratorNotice: true
+          output: RELEASE_CHANGELOG.md
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true'
 
-      - name: 👍 Create Stable release
-        uses: softprops/action-gh-release@v1
+      - name: "👍 Create Stable release"
+        uses: softprops/action-gh-release@v2
         with:
           prerelease: false
-          body: "${{ steps.changelog.outputs.changelog }}"
+          body_path: RELEASE_CHANGELOG.md
           name: "Version ${{ env.COMPONENT_VERSION }}"
           tag_name: "v${{ env.COMPONENT_VERSION }}"
-          target_commitish: "${{ env.CURRENT_SHA }}"
-        if: contains(env.COMPONENT_VERSION, 'beta') == false
+          files: |
+            flower-card.js
+            flower-card.js.gz
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true' && contains(env.COMPONENT_VERSION, 'beta') == false
 
-      - name: 🤞 Create Beta release
-        uses: softprops/action-gh-release@v1
+      - name: "🤞 Create Beta release"
+        uses: softprops/action-gh-release@v2
         with:
           prerelease: true
-          body: "${{ steps.changelog.outputs.changelog }}"
+          body_path: RELEASE_CHANGELOG.md
           name: "Version ${{ env.COMPONENT_VERSION }}"
           tag_name: "v${{ env.COMPONENT_VERSION }}"
-          target_commitish: "${{ env.CURRENT_SHA }}"
-        if: contains(env.COMPONENT_VERSION, 'beta') == true
+          files: |
+            flower-card.js
+            flower-card.js.gz
+        if: steps.check_package.outputs.changed == 'true' && steps.check_tag.outputs.exists != 'true' && contains(env.COMPONENT_VERSION, 'beta') == true
