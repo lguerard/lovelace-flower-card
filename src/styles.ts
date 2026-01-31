@@ -117,13 +117,15 @@ export const style = css`
     white-space: nowrap;
   }
   #area {
-    color: #8c96a5;
-    font-size: 0.85em;
+    color: var(--secondary-text-color);
+    font-size: 0.9em;
+    font-weight: 500;
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    opacity: 0.8;
+    opacity: 0.9;
+    margin-top: 2px;
   }
   .header-compact > #species {
     line-height: 85%;

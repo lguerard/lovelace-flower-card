@@ -296,11 +296,18 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
         entityState.state !== "unavailable" &&
         entityState.state !== "none";
 
+      const hasValue =
+        attr &&
+        attr.current !== undefined &&
+        attr.current !== null &&
+        attr.current !== "unavailable" &&
+        attr.current !== "unknown";
+
       const isExplicit =
         card.config.show_bars && card.config.show_bars.includes(elem);
 
-      // If no sensor and not explicitly requested, skip it
-      if (!hasValidSensor && !isExplicit) {
+      // If no sensor, no value and not explicitly requested, skip it
+      if (!hasValidSensor && !hasValue && !isExplicit) {
         continue;
       }
 

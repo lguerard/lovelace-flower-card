@@ -151,13 +151,15 @@
     white-space: nowrap;
   }
   #area {
-    color: #8c96a5;
-    font-size: 0.85em;
+    color: var(--secondary-text-color);
+    font-size: 0.9em;
+    font-weight: 500;
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    opacity: 0.8;
+    opacity: 0.9;
+    margin-top: 2px;
   }
   .header-compact > #species {
     line-height: 85%;
@@ -335,7 +337,7 @@
       <ha-icon .icon="${d}" style="color: ${c}"></ha-icon>
       ${e.show_state?n.html`<span class="badge-text">${l}</span>`:""}
     </div>
-  `},e.renderExtraBadges=t=>t.config.extra_badges&&0!==t.config.extra_badges.length?t.config.extra_badges.map((i=>(0,e.renderExtraBadge)(t,i))):n.html``,e.renderAttributes=t=>{const i={},r=t.config.show_bars||o.default_show_bars;if(t.plantinfo&&t.plantinfo.result){const e=t.plantinfo.result;for(const n of r){const r=e[n];let a=r?.sensor;a&&"unknown"!==t._hass.states[a]?.state||"temperature"!==n||(a=t.config.temperature_sensor||e.room_temperature),a&&"unknown"!==t._hass.states[a]?.state||"humidity"!==n||(a=t.config.humidity_sensor||e.room_humidity);const o=a?t._hass.states[a]:void 0,s=o&&"unknown"!==o.state&&"unavailable"!==o.state&&"none"!==o.state,c=t.config.show_bars&&t.config.show_bars.includes(n);if(s||c){if("dli"===n&&!c){const i=e.illuminance?.sensor||e.brightness?.sensor;if(!i||"unknown"===t._hass.states[i]?.state||"unavailable"===t._hass.states[i]?.state)continue}if(r||a){const e=s?Number(o.state):r?.current||0,c=s?t._hass.formatEntityState(o).replace(/[^\d,.+-]/g,""):String(e),l=o?.attributes?.unit_of_measurement||r?.unit_of_measurement||"",u=void 0!==r?.min?r.min:null,d=void 0!==r?.max?r.max:null,m={max:null!==d?Number(d):null,min:null!==u?Number(u):null};i[n]={name:n,current:Number(e),limits:m,icon:String(r?.icon||("temperature"===n?"mdi:thermometer":"mdi:water-percent")),sensor:String(a||""),unit_of_measurement:String(l),display_state:c}}}}}return(0,e.renderAttributeChunks)(t,i)},e.renderAttribute=(t,e)=>{const{max:i,min:o}=e.limits,c=e.unit_of_measurement,l="lx"===e.unit_of_measurement,u=e.icon||"mdi:help-circle-outline",d=e.current??0,m=!isNaN(d)&&null!=d,h=null!==i&&null!==o&&!isNaN(i)&&!isNaN(o)&&void 0!==i&&void 0!==o,p=e.display_state,g=m&&h&&(d<o||d>i)?"var(--label-badge-red)":"var(--label-badge-green)",f=!l||d<=0||o<=0||!h?h?100*Math.max(0,Math.min(1,(d-o)/(i-o))):0:100*Math.max(0,Math.min(1,(Math.log(d)-Math.log(o))/(Math.log(i)-Math.log(o)))),y="dli"===e.name||"dli_24h"===e.name?'<math style="display: inline-grid;" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mrow><mn>mol</mn></mrow><mrow><mn>d</mn><mn>⋅</mn><msup><mn>m</mn><mn>2</mn></msup></mrow></mfrac></mrow></math>':c,_=t.config.display_type===r.DisplayType.Compact,b=t.config.bars_per_row??(_?1:2),v=!(t.config.hide_units??_),w="attribute tooltip "+(1===b?"width-100":""),$="temperature"===e.name||"humidity"===e.name;return n.html`
+  `},e.renderExtraBadges=t=>t.config.extra_badges&&0!==t.config.extra_badges.length?t.config.extra_badges.map((i=>(0,e.renderExtraBadge)(t,i))):n.html``,e.renderAttributes=t=>{const i={},r=t.config.show_bars||o.default_show_bars;if(t.plantinfo&&t.plantinfo.result){const e=t.plantinfo.result;for(const n of r){const r=e[n];let a=r?.sensor;a&&"unknown"!==t._hass.states[a]?.state||"temperature"!==n||(a=t.config.temperature_sensor||e.room_temperature),a&&"unknown"!==t._hass.states[a]?.state||"humidity"!==n||(a=t.config.humidity_sensor||e.room_humidity);const o=a?t._hass.states[a]:void 0,s=o&&"unknown"!==o.state&&"unavailable"!==o.state&&"none"!==o.state,c=r&&void 0!==r.current&&null!==r.current&&"unavailable"!==r.current&&"unknown"!==r.current,l=t.config.show_bars&&t.config.show_bars.includes(n);if(s||c||l){if("dli"===n&&!l){const i=e.illuminance?.sensor||e.brightness?.sensor;if(!i||"unknown"===t._hass.states[i]?.state||"unavailable"===t._hass.states[i]?.state)continue}if(r||a){const e=s?Number(o.state):r?.current||0,c=s?t._hass.formatEntityState(o).replace(/[^\d,.+-]/g,""):String(e),l=o?.attributes?.unit_of_measurement||r?.unit_of_measurement||"",u=void 0!==r?.min?r.min:null,d=void 0!==r?.max?r.max:null,m={max:null!==d?Number(d):null,min:null!==u?Number(u):null};i[n]={name:n,current:Number(e),limits:m,icon:String(r?.icon||("temperature"===n?"mdi:thermometer":"mdi:water-percent")),sensor:String(a||""),unit_of_measurement:String(l),display_state:c}}}}}return(0,e.renderAttributeChunks)(t,i)},e.renderAttribute=(t,e)=>{const{max:i,min:o}=e.limits,c=e.unit_of_measurement,l="lx"===e.unit_of_measurement,u=e.icon||"mdi:help-circle-outline",d=e.current??0,m=!isNaN(d)&&null!=d,h=null!==i&&null!==o&&!isNaN(i)&&!isNaN(o)&&void 0!==i&&void 0!==o,p=e.display_state,g=m&&h&&(d<o||d>i)?"var(--label-badge-red)":"var(--label-badge-green)",f=!l||d<=0||o<=0||!h?h?100*Math.max(0,Math.min(1,(d-o)/(i-o))):0:100*Math.max(0,Math.min(1,(Math.log(d)-Math.log(o))/(Math.log(i)-Math.log(o)))),y="dli"===e.name||"dli_24h"===e.name?'<math style="display: inline-grid;" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mrow><mn>mol</mn></mrow><mrow><mn>d</mn><mn>⋅</mn><msup><mn>m</mn><mn>2</mn></msup></mrow></mfrac></mrow></math>':c,_=t.config.display_type===r.DisplayType.Compact,b=t.config.bars_per_row??(_?1:2),v=!(t.config.hide_units??_),w="attribute tooltip "+(1===b?"width-100":""),$="temperature"===e.name||"humidity"===e.name;return n.html`
     <div
       class="${w}"
       @click="${()=>(0,s.moreInfo)(t,e.sensor)}"
