@@ -279,17 +279,15 @@ export const renderAttributes = (
       // Fallback for temperature and humidity if plant entity doesn't have it
       if (
         (!sensorId || card._hass.states[sensorId]?.state === "unknown") &&
-        elem === "temperature" &&
-        card.config.temperature_sensor
+        elem === "temperature"
       ) {
-        sensorId = card.config.temperature_sensor;
+        sensorId = card.config.temperature_sensor || result.room_temperature;
       }
       if (
         (!sensorId || card._hass.states[sensorId]?.state === "unknown") &&
-        elem === "humidity" &&
-        card.config.humidity_sensor
+        elem === "humidity"
       ) {
-        sensorId = card.config.humidity_sensor;
+        sensorId = card.config.humidity_sensor || result.room_humidity;
       }
 
       if (attr || sensorId) {

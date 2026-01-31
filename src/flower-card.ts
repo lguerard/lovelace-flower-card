@@ -176,9 +176,9 @@ export default class FlowerCard extends LitElement {
           name: "Display Name",
           display_type: "Display Type",
           battery_sensor: "Battery Sensor",
-          temperature_sensor: "Room Temperature Sensor",
-          humidity_sensor: "Room Humidity Sensor",
-          weather_entity: "Weather Entity (for outdoor plants)",
+          temperature_sensor: "Room Temperature (Override)",
+          humidity_sensor: "Room Humidity (Override)",
+          weather_entity: "Weather Entity (Override)",
           show_bars: "Show Bars",
           hide_species: "Hide Species",
           hide_image: "Hide Image",
@@ -223,6 +223,13 @@ export default class FlowerCard extends LitElement {
     }
 
     this.config = config;
+  }
+
+  private _markWatered(ev: Event): void {
+    ev.stopPropagation();
+    this._hass.callService("plant", "watered", {
+      entity_id: this.config?.entity,
+    });
   }
 
   render(): HTMLTemplateResult {
@@ -274,7 +281,15 @@ export default class FlowerCard extends LitElement {
                   : ""}"
               ></ha-icon>
             </span>
-            <span id="next-watering">${nextWatering}</span>
+            <span id="next-watering">
+              ${nextWatering}
+              <ha-icon
+                class="water-button"
+                icon="mdi:water-pump"
+                @click="${(e: Event) => this._markWatered(e)}"
+                title="Mark as watered"
+              ></ha-icon>
+            </span>
           </div>
           <span id="battery"
             >${renderExtraBadges(this)}${renderBattery(this)}</span

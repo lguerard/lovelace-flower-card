@@ -138,6 +138,17 @@ export const style = css`
     color: #8c96a5;
     margin-right: 16px;
   }
+  .water-button {
+    cursor: pointer;
+    --mdc-icon-size: 20px;
+    margin-left: 4px;
+    vertical-align: middle;
+    color: var(--secondary-text-color);
+    transition: color 0.2s;
+  }
+  .water-button:hover {
+    color: var(--primary-color);
+  }
   .meter-container {
     height: 8px;
     background-color: var(--secondary-background-color);
