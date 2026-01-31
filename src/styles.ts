@@ -150,6 +150,7 @@ export const style = css`
     border-radius: 12px;
     background: var(--secondary-background-color);
     color: var(--primary-text-color);
+    white-space: nowrap;
   }
   #next-watering.watering-urgent {
     background-color: var(--label-badge-red);
