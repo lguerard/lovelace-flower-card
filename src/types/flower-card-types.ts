@@ -26,6 +26,7 @@ export interface FlowerCardConfig extends LovelaceCardConfig {
   hide_image?: boolean;
   is_outside?: boolean; // Manual override for outside/indoor
   extra_badges?: ExtraBadge[];
+  sort_entity?: string; // Optional input_select entity to control sorting
 }
 
 export enum DisplayType {

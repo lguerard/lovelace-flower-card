@@ -237,6 +237,15 @@ export default class FlowerCard extends LitElement {
     });
   }
 
+  private _toggleSort(ev: Event): void {
+    ev.stopPropagation();
+    if (this.config?.sort_entity) {
+      this._hass.callService("input_select", "select_next", {
+        entity_id: this.config.sort_entity,
+      });
+    }
+  }
+
   private _renderPlantInfoOverlay(): HTMLTemplateResult {
     if (!this.plantinfo || !this.plantinfo.result) return html``;
 
@@ -368,6 +377,16 @@ export default class FlowerCard extends LitElement {
                 @click="${(e: Event) => this._markWatered(e)}"
                 title="Mark as watered"
               ></ha-icon>
+              ${this.config.sort_entity
+                ? html`
+                    <ha-icon
+                      class="sort-button"
+                      icon="mdi:sort-variant"
+                      @click="${(e: Event) => this._toggleSort(e)}"
+                      title="Change sort order"
+                    ></ha-icon>
+                  `
+                : ""}
             </div>
           </div>
           <span id="battery"

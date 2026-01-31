@@ -170,14 +170,24 @@ export const style = css`
     color: white;
     margin-left: 8px;
   }
-  .water-button {
+  #next-watering .sort-button {
+    color: white;
+    margin-left: 8px;
+    opacity: 0.7;
+  }
+  .water-button,
+  .sort-button {
     cursor: pointer;
     --mdc-icon-size: 18px;
     vertical-align: middle;
-    transition: transform 0.2s;
+    transition:
+      transform 0.2s,
+      opacity 0.2s;
   }
-  .water-button:hover {
+  .water-button:hover,
+  .sort-button:hover {
     transform: scale(1.2);
+    opacity: 1;
   }
   .meter-container {
     height: 8px;

@@ -1,0 +1,41 @@
+# This example shows how to use an input_select to control the sorting of auto-entities
+#
+# Pre-requisite: Create an input_select in Home Assistant
+# input_select:
+#   plant_sort_order:
+#     name: Sort plants by
+#     options:
+#       - name
+#       - area
+#       - next_watering
+#     initial: name
+#     icon: mdi:sort
+
+type: vertical-stack
+cards:
+- type: entities
+  entities:
+  - entity: input_select.plant_sort_order
+    name: Trier par
+
+- type: custom:auto-entities
+  card:
+    type: grid
+    columns: 2
+    square: false
+  filter:
+    include:
+    - domain: plant
+      options:
+        type: custom:flower-card
+        # Link to the sort entity so you can cycle it from ANY card!
+        sort_entity: input_select.plant_sort_order
+  sort:
+    template: >
+      {% set sort_order = states('input_select.plant_sort_order') %} {% if sort_order == 'area' %}
+        {{ {'method': 'attribute', 'attribute': 'area'} }}
+      {% elif sort_order == 'next_watering' %}
+        {{ {'method': 'attribute', 'attribute': 'next_watering'} }}
+      {% else %}
+        {{ {'method': 'friendly_name'} }}
+      {% endif %}
