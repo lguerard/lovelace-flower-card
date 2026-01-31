@@ -26,16 +26,32 @@ export function calculate_next_watering(
   }
 
   const currentMoisture = parseFloat(moistureAttribute.current);
-  const minMoisture = parseFloat(moistureAttribute.min);
-  const maxMoisture = parseFloat(moistureAttribute.max);
-
-  if (isNaN(currentMoisture) || isNaN(minMoisture) || isNaN(maxMoisture)) {
-    return "Unknown";
-  }
+  const minMoisture =
+    moistureAttribute.min !== null ? parseFloat(moistureAttribute.min) : 20;
+  const maxMoisture =
+    moistureAttribute.max !== null ? parseFloat(moistureAttribute.max) : 60;
 
   // Default daily water drop (in moisture units)
   // Use baseline watering frequency if available, otherwise assume 7 days
   const baselineDays = plantInfo.result.watering || 7;
+
+  if (isNaN(currentMoisture)) {
+    // If we can't get current moisture, we might want to check last_watered
+    const lastWatered = plantInfo.result.last_watered;
+    if (lastWatered) {
+      const lastWateredDate = new Date(lastWatered);
+      const nextWateringDate = new Date(
+        lastWateredDate.getTime() + baselineDays * 24 * 60 * 60 * 1000,
+      );
+      const today = new Date();
+      const diffTime = nextWateringDate.getTime() - today.getTime();
+      const daysToWater = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      return formatDays(daysToWater);
+    }
+    return "Unknown";
+  }
+
   let dailymoistureLoss = (maxMoisture - minMoisture) / baselineDays;
   if (dailymoistureLoss <= 0) dailymoistureLoss = 5;
 
@@ -98,6 +114,10 @@ export function calculate_next_watering(
   const moistureAboveMin = currentMoisture - minMoisture;
   const daysToWater = Math.floor(moistureAboveMin / actualDailyLoss);
 
+  return formatDays(daysToWater);
+}
+
+function formatDays(daysToWater: number): string {
   if (daysToWater <= 0) {
     return "Water today";
   } else if (daysToWater === 1) {

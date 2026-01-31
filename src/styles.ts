@@ -134,20 +134,42 @@ export const style = css`
     align-items: center;
   }
   #next-watering {
+    display: flex;
+    align-items: center;
     font-size: 0.8em;
-    color: #8c96a5;
     margin-right: 16px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: var(--secondary-background-color);
+    color: var(--primary-text-color);
+  }
+  #next-watering.watering-urgent {
+    background-color: var(--label-badge-red);
+    color: white;
+  }
+  #next-watering.watering-warning {
+    background-color: var(--label-badge-yellow, orange);
+    color: white;
+  }
+  #next-watering.watering-safe {
+    background-color: var(--label-badge-green);
+    color: white;
+  }
+  #next-watering span {
+    font-weight: bold;
+  }
+  #next-watering .water-button {
+    color: white;
+    margin-left: 8px;
   }
   .water-button {
     cursor: pointer;
-    --mdc-icon-size: 20px;
-    margin-left: 4px;
+    --mdc-icon-size: 18px;
     vertical-align: middle;
-    color: var(--secondary-text-color);
-    transition: color 0.2s;
+    transition: transform 0.2s;
   }
   .water-button:hover {
-    color: var(--primary-color);
+    transform: scale(1.2);
   }
   .meter-container {
     height: 8px;

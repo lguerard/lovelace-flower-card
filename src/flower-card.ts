@@ -261,12 +261,19 @@ export default class FlowerCard extends LitElement {
         : "card-margin-top";
     const noImageClass = hideImage ? " no-image" : "";
 
-    const nextWatering =
+    const nextWateringValue =
       this.stateObj.attributes.next_watering ||
       this.plantinfo?.result?.next_watering ||
       (this.plantinfo
         ? calculate_next_watering(this._hass, this.config, this.plantinfo)
         : "Calculating...");
+
+    let wateringClass = "watering-safe";
+    if (nextWateringValue === "Water today" || nextWateringValue === "0" || nextWateringValue === 0) {
+      wateringClass = "watering-urgent";
+    } else if (nextWateringValue === "Tomorrow" || nextWateringValue === "1" || nextWateringValue === 1) {
+      wateringClass = "watering-warning";
+    }
 
     return html`
       <ha-card class="${haCardCssClass}">
@@ -286,15 +293,15 @@ export default class FlowerCard extends LitElement {
                   : ""}"
               ></ha-icon>
             </span>
-            <span id="next-watering">
-              ${nextWatering}
+            <div id="next-watering" class="${wateringClass}">
+              <span>${nextWateringValue}</span>
               <ha-icon
                 class="water-button"
                 icon="mdi:water-pump"
                 @click="${(e: Event) => this._markWatered(e)}"
                 title="Mark as watered"
               ></ha-icon>
-            </span>
+            </div>
           </div>
           <span id="battery"
             >${renderExtraBadges(this)}${renderBattery(this)}</span
