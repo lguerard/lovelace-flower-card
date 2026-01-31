@@ -243,7 +243,10 @@ export default class FlowerCard extends LitElement {
     const result = this.plantinfo.result;
     const items = [
       { label: "Plant-ID or PID", value: result.pid },
-      { label: "Scientific name", value: result.display_pid || result.species },
+      {
+        label: "Scientific name",
+        value: result.scientific_name || result.display_pid || result.species,
+      },
       { label: "Category", value: result.category },
       { label: "Origin", value: result.origin },
       {
@@ -252,7 +255,7 @@ export default class FlowerCard extends LitElement {
           ? Array.isArray(result.common_names)
             ? result.common_names.join(", ")
             : result.common_names
-          : result.alias,
+          : result.common_name || result.alias || result.friendly_name,
       },
     ].filter(
       (item) =>

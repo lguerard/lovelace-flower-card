@@ -1,6 +1,9 @@
 import { css } from "lit";
 
 export const style = css`
+  ha-card {
+    overflow: visible !important;
+  }
   .card-margin-top {
     margin-top: 32px;
   }
@@ -267,17 +270,16 @@ export const style = css`
   }
   .plant-info-overlay {
     opacity: 0;
-    visibility: hidden;
     position: absolute;
     padding: 12px;
     background: var(--ha-card-background, var(--card-background-color, white));
     color: var(--primary-text-color);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-    z-index: 100;
+    z-index: 1000;
     border-radius: 8px;
     width: 250px;
-    left: 100px;
-    top: 10px;
+    left: 40px;
+    top: 40px;
     transition:
       opacity 0.3s ease-in-out,
       transform 0.3s ease-in-out;
@@ -289,7 +291,6 @@ export const style = css`
   }
   .image-container:hover .plant-info-overlay {
     opacity: 1;
-    visibility: visible;
     transform: translateY(0);
   }
   .plant-info-overlay .info-item {
