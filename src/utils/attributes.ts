@@ -315,9 +315,12 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
           attr?.unit_of_measurement ||
           "";
 
-        const min = attr?.min ?? 0;
-        const max = attr?.max ?? 100;
-        const limits: Limits = { max: Number(max), min: Number(min) };
+        const min = attr?.min !== undefined ? attr.min : null;
+        const max = attr?.max !== undefined ? attr.max : null;
+        const limits: Limits = {
+          max: max !== null ? Number(max) : null,
+          min: min !== null ? Number(min) : null,
+        };
 
         displayed[elem] = {
           name: elem,

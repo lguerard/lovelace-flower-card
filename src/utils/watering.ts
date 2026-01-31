@@ -25,9 +25,13 @@ export function calculate_next_watering(
     return "Unknown";
   }
 
-  const currentMoisture = moistureAttribute.current;
-  const minMoisture = moistureAttribute.min;
-  const maxMoisture = moistureAttribute.max;
+  const currentMoisture = parseFloat(moistureAttribute.current);
+  const minMoisture = parseFloat(moistureAttribute.min);
+  const maxMoisture = parseFloat(moistureAttribute.max);
+
+  if (isNaN(currentMoisture) || isNaN(minMoisture) || isNaN(maxMoisture)) {
+    return "Unknown";
+  }
 
   // Default daily water drop (in moisture units)
   // Use baseline watering frequency if available, otherwise assume 7 days
