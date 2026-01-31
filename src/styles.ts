@@ -37,38 +37,6 @@ export const style = css`
     padding-top: 4px;
     min-height: 55px;
   }
-  .header > img {
-    border-radius: 50%;
-    width: 88px;
-    height: 88px;
-    object-fit: cover;
-    margin-left: 16px;
-    margin-right: 16px;
-    margin-top: -32px;
-    float: left;
-    box-shadow: var(
-      --ha-card-box-shadow,
-      0 2px 2px 0 rgba(0, 0, 0, 0.14),
-      0 1px 5px 0 rgba(0, 0, 0, 0.12),
-      0 3px 1px -2px rgba(0, 0, 0, 0.2)
-    );
-  }
-  .header-compact > img {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    margin-left: 8px;
-    margin-right: 8px;
-    margin-top: 0px;
-    float: left;
-    box-shadow: var(
-      --ha-card-box-shadow,
-      0 2px 2px 0 rgba(0, 0, 0, 0.14),
-      0 1px 5px 0 rgba(0, 0, 0, 0.12),
-      0 3px 1px -2px rgba(0, 0, 0, 0.2)
-    );
-  }
   .header.no-image {
     height: auto;
     padding: 16px;
@@ -84,6 +52,38 @@ export const style = css`
   .header-compact.no-image > #name {
     margin-top: 0;
     margin-left: 0;
+  }
+  .image-container {
+    position: relative;
+    float: left;
+  }
+  .header .image-container {
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-top: -32px;
+  }
+  .header-compact .image-container {
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-top: 0px;
+  }
+  .image-container > img {
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: var(
+      --ha-card-box-shadow,
+      0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 1px 5px 0 rgba(0, 0, 0, 0.12),
+      0 3px 1px -2px rgba(0, 0, 0, 0.2)
+    );
+  }
+  .header .image-container > img {
+    width: 88px;
+    height: 88px;
+  }
+  .header-compact .image-container > img {
+    width: 50px;
+    height: 50px;
   }
   .header > #name {
     font-weight: bold;
@@ -272,21 +272,22 @@ export const style = css`
     padding: 12px;
     background: var(--ha-card-background, var(--card-background-color, white));
     color: var(--primary-text-color);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     z-index: 100;
     border-radius: 8px;
     width: 250px;
     left: 100px;
     top: 10px;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transition:
+      opacity 0.3s ease-in-out,
+      transform 0.3s ease-in-out;
     pointer-events: none;
     font-size: 0.9em;
     line-height: 1.4;
     transform: translateY(10px);
     border: 1px solid var(--divider-color);
   }
-  .header:hover .plant-info-overlay,
-  .header-compact:hover .plant-info-overlay {
+  .image-container:hover .plant-info-overlay {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);

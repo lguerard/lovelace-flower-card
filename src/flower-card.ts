@@ -245,9 +245,15 @@ export default class FlowerCard extends LitElement {
       { label: "Common Name", value: result.common_name },
       { label: "Watering", value: result.watering_text || result.watering },
       { label: "Sunlight", value: result.sunlight_text || result.sunlight },
-      { label: "Fertilizing", value: result.fertilizing_text || result.fertilizing },
+      {
+        label: "Fertilizing",
+        value: result.fertilizing_text || result.fertilizing,
+      },
       { label: "Pruning", value: result.pruning_text || result.pruning },
-    ].filter((item) => item.value !== undefined && item.value !== null && item.value !== "");
+    ].filter(
+      (item) =>
+        item.value !== undefined && item.value !== null && item.value !== "",
+    );
 
     if (items.length === 0) return html``;
 
@@ -331,9 +337,13 @@ export default class FlowerCard extends LitElement {
           @click="${() => moreInfo(this, this.stateObj.entity_id)}"
         >
           ${!hideImage
-            ? html`<img src="${this._resolvedImageUrl || missingImage}" />`
+            ? html`
+                <div class="image-container">
+                  <img src="${this._resolvedImageUrl || missingImage}" />
+                  ${this._renderPlantInfoOverlay()}
+                </div>
+              `
             : ""}
-          ${this._renderPlantInfoOverlay()}
           <div class="header-text">
             <span id="name">
               ${displayName}
