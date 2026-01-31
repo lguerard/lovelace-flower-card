@@ -6,6 +6,7 @@ import { DisplayType, FlowerCardConfig, HomeAssistantEntity, PlantInfo } from '.
 import * as packageJson from '../package.json';
 import { renderAttributes, renderBattery, renderExtraBadges } from './utils/attributes';
 import { CARD_NAME, default_show_bars, missingImage, plantAttributes } from './utils/constants';
+import { calculate_next_watering } from './utils/watering';
 import { isMediaSourceUrl, moreInfo, resolveMediaSource } from './utils/utils';
 
 console.info(
@@ -89,6 +90,18 @@ export default class FlowerCard extends LitElement {
                     selector: { entity: { domain: "sensor", device_class: "battery" } }
                 },
                 {
+                    name: "temperature_sensor",
+                    selector: { entity: { domain: "sensor", device_class: "temperature" } }
+                },
+                {
+                    name: "humidity_sensor",
+                    selector: { entity: { domain: "sensor", device_class: "humidity" } }
+                },
+                {
+                    name: "weather_entity",
+                    selector: { entity: { domain: "weather" } }
+                },
+                {
                     type: "expandable",
                     name: "",
                     title: "Bars",
@@ -141,6 +154,9 @@ export default class FlowerCard extends LitElement {
                     name: "Display Name",
                     display_type: "Display Type",
                     battery_sensor: "Battery Sensor",
+                    temperature_sensor: "Room Temperature Sensor",
+                    humidity_sensor: "Room Humidity Sensor",
+                    weather_entity: "Weather Entity (for outdoor plants)",
                     show_bars: "Show Bars",
                     hide_species: "Hide Species",
                     hide_image: "Hide Image",
@@ -201,21 +217,26 @@ export default class FlowerCard extends LitElement {
         const haCardCssClass = (this.config.display_type === DisplayType.Compact || hideImage) ? "" : "card-margin-top";
         const noImageClass = hideImage ? " no-image" : "";
 
+        const nextWatering = this.plantinfo ? calculate_next_watering(this._hass, this.config, this.plantinfo) : "Calculating...";
+
         return html`
             <ha-card class="${haCardCssClass}">
             <div class="${headerCssClass}${noImageClass}" @click="${() =>
                 moreInfo(this, this.stateObj.entity_id)}">
                 ${!hideImage ? html`<img src="${this._resolvedImageUrl || missingImage}">` : ''}
-                <span id="name"> ${displayName} <ha-icon .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
+                <div class="header-text">
+                    <span id="name"> ${displayName} <ha-icon .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
                 ? "alert-circle-outline"
                 : ""
             }"></ha-icon>
-                </span>
+                    </span>
+                    <span id="next-watering">${nextWatering}</span>
+                </div>
                 <span id="battery">${renderExtraBadges(this)}${renderBattery(this)}</span>
                 ${!hideSpecies ? html`<span id="species">${species}</span>` : ''}
             </div>
             <div class="divider"></div>
-            ${renderAttributes(this)}
+            ${renderAttributes(this, Object.keys(this.plantinfo?.result || {}))}
             </ha-card>
             `;
     }
