@@ -94,11 +94,16 @@ export const style = css`
   #name {
     font-weight: bold;
     text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  #name .name-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: flex;
-    align-items: center;
   }
   .header #name {
     margin-top: 16px;
@@ -294,28 +299,25 @@ export const style = css`
     background: var(
       --ha-card-background,
       var(--card-background-color, #1c1c1c)
-    );
-    color: var(--primary-text-color);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-    z-index: 2000;
+    ) !important;
+    color: var(--primary-text-color) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    z-index: 9999 !important;
     border-radius: 8px;
-    width: 250px;
-    left: 80%;
-    top: 50%;
+    width: 280px;
+    left: 40px;
+    top: 10px;
     transition:
-      opacity 0.3s ease-in-out,
-      transform 0.3s ease-in-out,
-      visibility 0.3s;
+      opacity 0.2s ease-in-out,
+      visibility 0.2s;
     pointer-events: none;
     font-size: 0.9em;
     line-height: 1.4;
-    transform: translateY(-50%) translateX(10px);
     border: 1px solid var(--divider-color);
   }
   .image-container:hover .plant-info-overlay {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(-50%) translateX(0);
+    opacity: 1 !important;
+    visibility: visible !important;
   }
   .plant-info-overlay .info-item {
     margin-bottom: 8px;

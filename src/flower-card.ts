@@ -368,7 +368,7 @@ export default class FlowerCard extends LitElement {
             : ""}
           <div class="header-text">
             <span id="name">
-              ${displayName}
+              <span class="name-text">${displayName}</span>
               <ha-icon
                 .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
                   ? "alert-circle-outline"
