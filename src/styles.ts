@@ -304,7 +304,7 @@ export const style = css`
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
     z-index: 9999 !important;
     border-radius: 8px;
-    width: 280px;
+    width: 320px;
     left: 40px;
     top: 10px;
     transition:

@@ -251,7 +251,7 @@ export default class FlowerCard extends LitElement {
 
     const result = this.plantinfo.result || {};
     const items = [
-      { label: "Plant-ID or PID", value: result.pid || result.display_pid },
+      { label: "Plant-ID (PID)", value: result.pid || result.display_pid },
       {
         label: "Scientific name",
         value:
@@ -262,7 +262,7 @@ export default class FlowerCard extends LitElement {
       { label: "Category", value: result.category },
       { label: "Origin", value: result.origin },
       {
-        label: "Common name or Alias",
+        label: "Common names",
         value: result.common_names
           ? Array.isArray(result.common_names)
             ? result.common_names.join(", ")
@@ -383,16 +383,6 @@ export default class FlowerCard extends LitElement {
                 @click="${(e: Event) => this._markWatered(e)}"
                 title="Mark as watered"
               ></ha-icon>
-              ${this.config.sort_entity
-                ? html`
-                    <ha-icon
-                      class="sort-button"
-                      icon="mdi:sort-variant"
-                      @click="${(e: Event) => this._toggleSort(e)}"
-                      title="Change sort order"
-                    ></ha-icon>
-                  `
-                : ""}
             </div>
           </div>
           <span id="battery"
