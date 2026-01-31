@@ -282,6 +282,8 @@ export default class FlowerCard extends LitElement {
           result.category ||
           attr.category ||
           attr.plant_category ||
+          result.plant_type ||
+          attr.plant_type ||
           result.type ||
           attr.type,
       },
@@ -295,7 +297,11 @@ export default class FlowerCard extends LitElement {
             attr.origins ||
             attr.plant_origin ||
             result.native_location ||
-            attr.native_location;
+            attr.native_location ||
+            result.native_distribution ||
+            attr.native_distribution ||
+            result.native_range ||
+            attr.native_range;
           return Array.isArray(originVal) ? originVal.join(", ") : originVal;
         })(),
       },
