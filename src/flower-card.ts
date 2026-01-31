@@ -247,6 +247,12 @@ export default class FlowerCard extends LitElement {
     }
 
     const species = this.stateObj.attributes.species;
+    const entityId = this.config.entity!;
+    // @ts-ignore
+    const areaId = this._hass.entities[entityId]?.area_id;
+    // @ts-ignore
+    const area = areaId ? this._hass.areas[areaId]?.name : null;
+
     const displayName =
       this.config.name || this.stateObj.attributes.friendly_name;
     const hideSpecies = this.config.hide_species ?? false;
@@ -308,6 +314,7 @@ export default class FlowerCard extends LitElement {
             >${renderExtraBadges(this)}${renderBattery(this)}</span
           >
           ${!hideSpecies ? html`<span id="species">${species}</span>` : ""}
+          ${area ? html`<span id="area">${area}</span>` : ""}
         </div>
         <div class="divider"></div>
         ${renderAttributes(this)}

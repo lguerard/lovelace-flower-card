@@ -304,6 +304,19 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
         continue;
       }
 
+      // Hide DLI if there's no light sensor (unless explicitly requested)
+      if (elem === "dli" && !isExplicit) {
+        const illuSensor =
+          result["illuminance"]?.sensor || result["brightness"]?.sensor;
+        if (
+          !illuSensor ||
+          card._hass.states[illuSensor]?.state === "unknown" ||
+          card._hass.states[illuSensor]?.state === "unavailable"
+        ) {
+          continue;
+        }
+      }
+
       if (attr || sensorId) {
         const current = hasValidSensor
           ? Number(entityState.state)

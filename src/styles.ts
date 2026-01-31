@@ -116,6 +116,15 @@ export const style = css`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  #area {
+    color: #8c96a5;
+    font-size: 0.85em;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.8;
+  }
   .header-compact > #species {
     line-height: 85%;
     color: #8c96a5;
