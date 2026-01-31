@@ -35,10 +35,12 @@ export const style = css`
   .header {
     padding-top: 8px;
     min-height: 72px;
+    overflow: visible !important;
   }
   .header-compact {
     padding-top: 4px;
     min-height: 55px;
+    overflow: visible !important;
   }
   .header.no-image {
     height: auto;
@@ -51,14 +53,15 @@ export const style = css`
     height: auto;
     padding: 8px 16px;
   }
-  .header.no-image > #name,
-  .header-compact.no-image > #name {
+  .header.no-image #name,
+  .header-compact.no-image #name {
     margin-top: 0;
     margin-left: 0;
   }
   .image-container {
     position: relative;
     float: left;
+    z-index: 100;
   }
   .header .image-container {
     margin-left: 16px;
@@ -88,23 +91,25 @@ export const style = css`
     width: 50px;
     height: 50px;
   }
-  .header > #name {
+  #name {
     font-weight: bold;
-    width: 100%;
-    margin-top: 16px;
     text-transform: capitalize;
-    display: block;
-  }
-  .header-compact > #name {
-    font-weight: bold;
-    width: 100%;
-    margin-top: 8px;
-    text-transform: capitalize;
-    display: block;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+  }
+  .header #name {
+    margin-top: 16px;
+  }
+  .header-compact #name {
+    margin-top: 8px;
   }
   #name ha-icon {
     color: rgb(240, 163, 163);
+    margin-left: 4px;
+    flex-shrink: 0;
   }
   .header > #species {
     color: #8c96a5;
@@ -140,6 +145,7 @@ export const style = css`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    overflow: visible;
   }
   #next-watering {
     display: flex;
@@ -151,6 +157,7 @@ export const style = css`
     background: var(--secondary-background-color);
     color: var(--primary-text-color);
     white-space: nowrap;
+    flex-shrink: 0;
   }
   #next-watering.watering-urgent {
     background-color: var(--label-badge-red);
@@ -281,28 +288,34 @@ export const style = css`
   }
   .plant-info-overlay {
     opacity: 0;
+    visibility: hidden;
     position: absolute;
     padding: 12px;
-    background: var(--ha-card-background, var(--card-background-color, white));
+    background: var(
+      --ha-card-background,
+      var(--card-background-color, #1c1c1c)
+    );
     color: var(--primary-text-color);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-    z-index: 1000;
+    z-index: 2000;
     border-radius: 8px;
     width: 250px;
-    left: 40px;
-    top: 40px;
+    left: 80%;
+    top: 50%;
     transition:
       opacity 0.3s ease-in-out,
-      transform 0.3s ease-in-out;
+      transform 0.3s ease-in-out,
+      visibility 0.3s;
     pointer-events: none;
     font-size: 0.9em;
     line-height: 1.4;
-    transform: translateY(10px);
+    transform: translateY(-50%) translateX(10px);
     border: 1px solid var(--divider-color);
   }
   .image-container:hover .plant-info-overlay {
     opacity: 1;
-    transform: translateY(0);
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
   }
   .plant-info-overlay .info-item {
     margin-bottom: 8px;
