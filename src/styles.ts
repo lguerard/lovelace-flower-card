@@ -256,8 +256,8 @@ export const style = css`
     margin-bottom: 3px;
     margin-right: 5px;
   }
-  .width-100 .header {
-    display: none;
+  .width-100 .attribute-header {
+    display: flex;
   }
   @media (max-width: 600px) {
     .header > .unit {
