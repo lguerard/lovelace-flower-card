@@ -268,10 +268,11 @@ export default class FlowerCard extends LitElement {
         ? calculate_next_watering(this._hass, this.config, this.plantinfo)
         : "Calculating...");
 
+    const days = parseInt(String(nextWateringValue));
     let wateringClass = "watering-safe";
-    if (nextWateringValue === "Water today" || nextWateringValue === "0" || nextWateringValue === 0) {
+    if (isNaN(days) || days <= 0) {
       wateringClass = "watering-urgent";
-    } else if (nextWateringValue === "Tomorrow" || nextWateringValue === "1" || nextWateringValue === 1) {
+    } else if (days === 1) {
       wateringClass = "watering-warning";
     }
 

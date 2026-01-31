@@ -49,7 +49,8 @@ export function calculate_next_watering(
 
       return formatDays(daysToWater);
     }
-    return "Unknown";
+    // New plant or no data: default to "Water today" (0 days)
+    return formatDays(0);
   }
 
   let dailymoistureLoss = (maxMoisture - minMoisture) / baselineDays;
@@ -118,17 +119,6 @@ export function calculate_next_watering(
 }
 
 function formatDays(daysToWater: number): string {
-  if (daysToWater <= 0) {
-    return "Water today";
-  } else if (daysToWater === 1) {
-    return "Tomorrow";
-  } else if (daysToWater < 7) {
-    const today = new Date();
-    const wateringDate = new Date(
-      today.getTime() + daysToWater * 24 * 60 * 60 * 1000,
-    );
-    return wateringDate.toLocaleDateString(undefined, { weekday: "short" });
-  } else {
-    return `In ${daysToWater} days`;
-  }
+  const d = Math.max(0, daysToWater);
+  return `${d} j`;
 }
