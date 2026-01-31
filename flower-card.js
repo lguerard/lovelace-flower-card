@@ -206,6 +206,7 @@
     border-radius: 12px;
     background: var(--secondary-background-color);
     color: var(--primary-text-color);
+    white-space: nowrap;
   }
   #next-watering.watering-urgent {
     background-color: var(--label-badge-red);
@@ -236,7 +237,9 @@
     cursor: pointer;
     --mdc-icon-size: 18px;
     vertical-align: middle;
-    transition: transform 0.2s, opacity 0.2s;
+    transition:
+      transform 0.2s,
+      opacity 0.2s;
   }
   .water-button:hover,
   .sort-button:hover {
@@ -426,12 +429,11 @@
               ></div>
             </div>
           `:""}
-      ${v||$?n.html`<div class="attribute-header">
-            <span
-              class="value"
-              style="${$&&h?`color: ${g}`:""}"
-              >${p}</span
-            >${v?n.html` <span class="unit">${(0,a.unsafeHTML)(y)}</span>`:""}
+      ${v||$?n.html`<div
+            class="attribute-header"
+            style="${$&&h?`color: ${g}`:""}"
+          >
+            <span class="value">${p}</span>${v?n.html` <span class="unit">${(0,a.unsafeHTML)(y)}</span>`:""}
           </div>`:""}
     </div>
   `},e.getChunkedDisplayed=(t,e)=>Object.values(t).reduce(((t,i,r)=>{const n=Math.floor(r/e);return t[n]||(t[n]=[]),t[n].push(i),t}),[]),e.renderAttributeChunks=(t,i)=>{const a=t.config.display_type===r.DisplayType.Compact,o=t.config.bars_per_row??(a?1:2),s=1===o,c=(0,e.getChunkedDisplayed)(i,o),l="attributes "+(s?"width-100":"");return c.map((i=>n.html`<div class="${l}">
