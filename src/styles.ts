@@ -22,8 +22,7 @@ export const style = css`
     align-items: center;
     width: 50%;
   }
-  .attribute .header,
-  .attribute .header-compact {
+  .attribute-header {
     height: auto;
     padding-top: 0px;
     display: flex;
