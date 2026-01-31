@@ -265,4 +265,46 @@ export const style = css`
       display: none;
     }
   }
+  .plant-info-overlay {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    padding: 12px;
+    background: var(--ha-card-background, var(--card-background-color, white));
+    color: var(--primary-text-color);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    z-index: 100;
+    border-radius: 8px;
+    width: 250px;
+    left: 100px;
+    top: 10px;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    pointer-events: none;
+    font-size: 0.9em;
+    line-height: 1.4;
+    transform: translateY(10px);
+    border: 1px solid var(--divider-color);
+  }
+  .header:hover .plant-info-overlay,
+  .header-compact:hover .plant-info-overlay {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .plant-info-overlay .info-item {
+    margin-bottom: 8px;
+  }
+  .plant-info-overlay .info-item:last-child {
+    margin-bottom: 0;
+  }
+  .plant-info-overlay .info-label {
+    font-weight: bold;
+    color: var(--accent-color);
+    display: block;
+    font-size: 0.8em;
+    text-transform: uppercase;
+  }
+  .plant-info-overlay .info-value {
+    display: block;
+  }
 `;

@@ -237,6 +237,34 @@ export default class FlowerCard extends LitElement {
     });
   }
 
+  private _renderPlantInfoOverlay(): HTMLTemplateResult {
+    if (!this.plantinfo || !this.plantinfo.result) return html``;
+
+    const result = this.plantinfo.result;
+    const items = [
+      { label: "Common Name", value: result.common_name },
+      { label: "Watering", value: result.watering_text || result.watering },
+      { label: "Sunlight", value: result.sunlight_text || result.sunlight },
+      { label: "Fertilizing", value: result.fertilizing_text || result.fertilizing },
+      { label: "Pruning", value: result.pruning_text || result.pruning },
+    ].filter((item) => item.value !== undefined && item.value !== null && item.value !== "");
+
+    if (items.length === 0) return html``;
+
+    return html`
+      <div class="plant-info-overlay">
+        ${items.map(
+          (item) => html`
+            <div class="info-item">
+              <span class="info-label">${item.label}</span>
+              <span class="info-value">${item.value}</span>
+            </div>
+          `,
+        )}
+      </div>
+    `;
+  }
+
   render(): HTMLTemplateResult {
     if (!this.config || !this._hass) return html``;
 
@@ -305,6 +333,7 @@ export default class FlowerCard extends LitElement {
           ${!hideImage
             ? html`<img src="${this._resolvedImageUrl || missingImage}" />`
             : ""}
+          ${this._renderPlantInfoOverlay()}
           <div class="header-text">
             <span id="name">
               ${displayName}
