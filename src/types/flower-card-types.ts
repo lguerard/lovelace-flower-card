@@ -24,6 +24,7 @@ export interface FlowerCardConfig extends LovelaceCardConfig {
   name?: string;
   hide_species?: boolean;
   hide_image?: boolean;
+  is_outside?: boolean; // Manual override for outside/indoor
   extra_badges?: ExtraBadge[];
 }
 
@@ -38,6 +39,7 @@ export interface HomeAssistantEntity extends HassEntity {
 }
 
 export interface PlantInfo {
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   result: any;
 }
 
@@ -51,8 +53,8 @@ export interface PlantAttribute {
 }
 
 export interface Limits {
-  max: number;
-  min: number;
+  max: number | null;
+  min: number | null;
 }
 
 export interface Attribute {

@@ -359,17 +359,26 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
   const icon = attr.icon || "mdi:help-circle-outline";
   const val = attr.current ?? 0;
   const aval = !isNaN(val) && val !== null && val !== undefined;
+  const hasLimits =
+    max !== null &&
+    min !== null &&
+    !isNaN(max) &&
+    !isNaN(min) &&
+    max !== undefined &&
+    min !== undefined;
   const display_val = attr.display_state;
 
-  const isProblem = aval && (val < min || val > max);
+  const isProblem = aval && hasLimits && (val < min || val > max);
   const color = isProblem
     ? "var(--label-badge-red)"
     : "var(--label-badge-green)";
 
   // For log scale, use linear if value or min is 0 (log(0) is undefined)
-  const useLinear = !logScale || val <= 0 || min <= 0;
+  const useLinear = !logScale || val <= 0 || min <= 0 || !hasLimits;
   const pct = useLinear
-    ? 100 * Math.max(0, Math.min(1, (val - min) / (max - min)))
+    ? hasLimits
+      ? 100 * Math.max(0, Math.min(1, (val - min) / (max - min)))
+      : 0
     : 100 *
       Math.max(
         0,
@@ -401,12 +410,13 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
     >
       <div class="tip" style="text-align:center;">
         ${attr.name}: ${display_val} ${unitTooltip}
+        ${hasLimits ? html`<br />(${min} - ${max})` : ""}
       </div>
       <ha-icon
         .icon="${icon}"
-        style="color: ${isTempOrHum ? color : "inherit"}"
+        style="color: ${isTempOrHum && hasLimits ? color : "inherit"}"
       ></ha-icon>
-      ${!isTempOrHum
+      ${!isTempOrHum && hasLimits
         ? html`
             <div class="meter-container">
               <div
@@ -423,7 +433,9 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
             class="header"
             style="${isTempOrHum ? "flex-grow: 1;" : ""}"
           >
-            <span class="value" style="${isTempOrHum ? `color: ${color}` : ""}"
+            <span
+              class="value"
+              style="${isTempOrHum && hasLimits ? `color: ${color}` : ""}"
               >${display_val}</span
             >&nbsp;<span class="unit">${unsafeHTML(label)}</span>
           </div>`

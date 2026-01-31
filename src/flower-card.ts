@@ -167,6 +167,10 @@ export default class FlowerCard extends LitElement {
               name: "hide_units",
               selector: { boolean: {} },
             },
+            {
+              name: "is_outside",
+              selector: { boolean: {} },
+            },
           ],
         },
       ],
@@ -183,6 +187,7 @@ export default class FlowerCard extends LitElement {
           hide_species: "Hide Species",
           hide_image: "Hide Image",
           hide_units: "Hide Units",
+          is_outside: "Is Outside?",
         };
         return labels[schema.name] || schema.name;
       },

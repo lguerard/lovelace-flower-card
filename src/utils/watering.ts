@@ -35,6 +35,11 @@ export function calculate_next_watering(
   let dailymoistureLoss = (maxMoisture - minMoisture) / baselineDays;
   if (dailymoistureLoss <= 0) dailymoistureLoss = 5;
 
+  const isOutside =
+    config.is_outside !== undefined
+      ? config.is_outside
+      : plantInfo.result.outside || false;
+
   const tempSensorId =
     config.temperature_sensor || plantInfo.result.room_temperature;
   const humiditySensorId =
@@ -62,7 +67,7 @@ export function calculate_next_watering(
 
   const weatherEntityId =
     config.weather_entity || plantInfo.result.weather_entity;
-  if (weatherEntityId && hass.states[weatherEntityId]) {
+  if (isOutside && weatherEntityId && hass.states[weatherEntityId]) {
     const weather = hass.states[weatherEntityId];
     // If it's outdoor, weather has more impact
     // check if raining in forecast
