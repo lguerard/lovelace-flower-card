@@ -405,7 +405,7 @@ export default class FlowerCard extends LitElement {
         >
           ${!hideImage
             ? html`
-                <div class="image-container">
+                <div class="plant-image-container">
                   <img src="${this._resolvedImageUrl || missingImage}" />
                 </div>
               `

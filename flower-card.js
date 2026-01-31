@@ -23,7 +23,7 @@
           @click="${()=>(0,m.moreInfo)(this,this.stateObj.entity_id)}"
         >
           ${c?"":n.html`
-                <div class="image-container">
+                <div class="plant-image-container">
                   <img src="${this._resolvedImageUrl||u.missingImage}" />
                 </div>
               `}
@@ -64,6 +64,7 @@
     `}async get_data(t){if(t&&t.connected)try{this.plantinfo=await t.callWS({type:"plant/get_info",entity_id:this.config?.entity})}catch(t){this.plantinfo={result:{}}}}getCardSize(){return 5}static get styles(){return o.style}};r([(0,a.property)()],h.prototype,"_hass",void 0),r([(0,a.property)()],h.prototype,"config",void 0),r([(0,a.state)()],h.prototype,"_showInfo",void 0),h=r([(0,a.customElement)(u.CARD_NAME)],h),e.default=h},800:(t,e,i)=>{Object.defineProperty(e,"__esModule",{value:!0}),e.style=void 0;const r=i(337);e.style=r.css`
   ha-card {
     overflow: visible !important;
+    isolation: isolate;
   }
   .card-margin-top {
     margin-top: 16px;
@@ -119,22 +120,22 @@
     margin-top: 0;
     margin-left: 0;
   }
-  .image-container {
+  .plant-image-container {
     position: relative;
     float: left;
-    z-index: 100;
+    z-index: 1;
   }
-  .header .image-container {
+  .header .plant-image-container {
     margin-left: 16px;
     margin-right: 16px;
     margin-top: -16px;
   }
-  .header-compact .image-container {
+  .header-compact .plant-image-container {
     margin-left: 8px;
     margin-right: 8px;
     margin-top: 0px;
   }
-  .image-container > img {
+  .plant-image-container > img {
     border-radius: 50%;
     object-fit: cover;
     background-color: var(--secondary-background-color);
@@ -145,11 +146,11 @@
       0 3px 1px -2px rgba(0, 0, 0, 0.2)
     );
   }
-  .header .image-container > img {
+  .header .plant-image-container > img {
     width: 88px;
     height: 88px;
   }
-  .header-compact .image-container > img {
+  .header-compact .plant-image-container > img {
     width: 50px;
     height: 50px;
   }

@@ -3,6 +3,7 @@ import { css } from "lit";
 export const style = css`
   ha-card {
     overflow: visible !important;
+    isolation: isolate;
   }
   .card-margin-top {
     margin-top: 16px;
@@ -58,22 +59,22 @@ export const style = css`
     margin-top: 0;
     margin-left: 0;
   }
-  .image-container {
+  .plant-image-container {
     position: relative;
     float: left;
-    z-index: 100;
+    z-index: 1;
   }
-  .header .image-container {
+  .header .plant-image-container {
     margin-left: 16px;
     margin-right: 16px;
     margin-top: -16px;
   }
-  .header-compact .image-container {
+  .header-compact .plant-image-container {
     margin-left: 8px;
     margin-right: 8px;
     margin-top: 0px;
   }
-  .image-container > img {
+  .plant-image-container > img {
     border-radius: 50%;
     object-fit: cover;
     background-color: var(--secondary-background-color);
@@ -84,11 +85,11 @@ export const style = css`
       0 3px 1px -2px rgba(0, 0, 0, 0.2)
     );
   }
-  .header .image-container > img {
+  .header .plant-image-container > img {
     width: 88px;
     height: 88px;
   }
-  .header-compact .image-container > img {
+  .header-compact .plant-image-container > img {
     width: 50px;
     height: 50px;
   }
