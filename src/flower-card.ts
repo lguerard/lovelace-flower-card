@@ -70,9 +70,13 @@ export default class FlowerCard extends LitElement {
     // Only fetch once every second at max. HA is flooded with websocket requests
     if (Date.now() > this.previousFetchDate + 1000) {
       this.previousFetchDate = Date.now();
-      this.get_data(hass).then(() => {
-        this.requestUpdate();
-      });
+      this.get_data(hass)
+        .then(() => {
+          this.requestUpdate();
+        })
+        .catch(() => {
+          /* Fallback handled in get_data */
+        });
     }
   }
 
@@ -250,17 +254,28 @@ export default class FlowerCard extends LitElement {
     if (!this.plantinfo || !this.plantinfo.result) return html``;
 
     const result = this.plantinfo.result || {};
+    const attr = this.stateObj.attributes;
     const items = [
-      { label: "Plant-ID (PID)", value: result.pid || result.display_pid },
+      {
+        label: "Plant-ID (PID)",
+        value: result.pid || result.display_pid || attr.pid || attr.plant_id,
+      },
       {
         label: "Scientific name",
         value:
           result.scientific_name ||
           result.species ||
-          this.stateObj.attributes.species,
+          attr.species ||
+          attr.scientific_name,
       },
-      { label: "Category", value: result.category },
-      { label: "Origin", value: result.origin },
+      {
+        label: "Category",
+        value: result.category || attr.category || attr.plant_category,
+      },
+      {
+        label: "Origin",
+        value: result.origin || attr.origin || attr.plant_origin,
+      },
       {
         label: "Common names",
         value: result.common_names
@@ -270,7 +285,8 @@ export default class FlowerCard extends LitElement {
           : result.common_name ||
             result.alias ||
             result.friendly_name ||
-            this.stateObj.attributes.friendly_name,
+            attr.common_name ||
+            attr.friendly_name,
       },
     ].filter(
       (item) =>
@@ -367,14 +383,18 @@ export default class FlowerCard extends LitElement {
               `
             : ""}
           <div class="header-text">
-            <span id="name">
-              <span class="name-text">${displayName}</span>
-              <ha-icon
-                .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
-                  ? "alert-circle-outline"
-                  : ""}"
-              ></ha-icon>
-            </span>
+            <div class="name-area-container">
+              <span id="name">
+                <span class="name-text">${displayName}</span>
+                <ha-icon
+                  .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
+                    ? "alert-circle-outline"
+                    : ""}"
+                ></ha-icon>
+              </span>
+              ${area ? html`<span id="area">${area}</span>` : ""}
+              ${!hideSpecies ? html`<span id="species">${species}</span>` : ""}
+            </div>
             <div id="next-watering" class="${wateringClass}">
               <span>${nextWateringValue}</span>
               <ha-icon
@@ -388,8 +408,6 @@ export default class FlowerCard extends LitElement {
           <span id="battery"
             >${renderExtraBadges(this)}${renderBattery(this)}</span
           >
-          ${!hideSpecies ? html`<span id="species">${species}</span>` : ""}
-          ${area ? html`<span id="area">${area}</span>` : ""}
         </div>
         <div class="divider"></div>
         ${renderAttributes(this)}
@@ -398,6 +416,7 @@ export default class FlowerCard extends LitElement {
   }
 
   async get_data(hass: HomeAssistant): Promise<void> {
+    if (!hass || !hass.connected) return;
     try {
       this.plantinfo = await hass.callWS({
         type: "plant/get_info",

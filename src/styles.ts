@@ -91,24 +91,29 @@ export const style = css`
     width: 50px;
     height: 50px;
   }
+  .name-area-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+  }
   #name {
     font-weight: bold;
     text-transform: capitalize;
     display: flex;
     align-items: center;
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
+    width: 100%;
   }
   #name .name-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .header #name {
+  .header .name-area-container {
     margin-top: 16px;
   }
-  .header-compact #name {
+  .header-compact .name-area-container {
     margin-top: 8px;
   }
   #name ha-icon {
@@ -116,25 +121,24 @@ export const style = css`
     margin-left: 4px;
     flex-shrink: 0;
   }
-  .header > #species {
-    color: #8c96a5;
+  .header #species,
+  .header #area {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .header #species {
+    color: #8c96a5;
   }
   #area {
     color: var(--secondary-text-color);
     font-size: 0.9em;
     font-weight: 500;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     opacity: 0.9;
     margin-top: 2px;
   }
-  .header-compact > #species {
+  .header-compact #species {
     line-height: 85%;
     color: #8c96a5;
     font-size: 0.8em;
