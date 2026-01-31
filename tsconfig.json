@@ -1,16 +1,16 @@
 {
-    "compilerOptions": {
-      "experimentalDecorators": true,
-      "module": "CommonJS",
-      "noImplicitAny": true,
-      "removeComments": true,
-      "resolveJsonModule": true,
-      "preserveConstEnums": true,
-      "sourceMap": true,
-      "moduleResolution": "Node",
-      "target": "es6",
-      "types": ["vitest/globals"]
-    },
-    "include": ["src/**/*", "tests/**/*"],
-    "exclude": ["node_modules"]
-  }
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "module": "CommonJS",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "moduleResolution": "Node",
+    "target": "es2020",
+    "lib": ["es2020", "dom", "dom.iterable"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "tests/**/*"]
+}

@@ -23,5 +23,7 @@ export const plantAttributes : DropdownOption[] = [
   { label: 'Daily Light Integral', value: 'dli' },
   { label: 'DLI (24h rolling)', value: 'dli_24h' },
   { label: 'CO2', value: 'co2' },
-  { label: 'Soil Temperature', value: 'soil_temperature' }
+  { label: 'Soil Temperature', value: 'soil_temperature' },
+  { label: 'Room Temperature', value: 'room_temperature' },
+  { label: 'Room Humidity', value: 'room_humidity' }
 ];
