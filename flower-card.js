@@ -56,13 +56,12 @@
     align-items: center;
     width: 50%;
   }
-  #battery {
-    float: right;
+  .attribute .header,
+  .attribute .header-compact {
+    height: auto;
+    padding-top: 0px;
     display: flex;
     align-items: center;
-    gap: 4px;
-    margin-right: 16px;
-    margin-top: -15px;
   }
   .header {
     padding-top: 8px;
@@ -71,11 +70,6 @@
   .header-compact {
     padding-top: 4px;
     min-height: 55px;
-  }
-  .attribute .header,
-  .attribute .header-compact {
-    height: auto;
-    padding-top: 0px;
   }
   .header > img {
     border-radius: 50%;
