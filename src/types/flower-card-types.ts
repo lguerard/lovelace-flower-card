@@ -27,6 +27,7 @@ export interface FlowerCardConfig extends LovelaceCardConfig {
   is_outside?: boolean; // Manual override for outside/indoor
   extra_badges?: ExtraBadge[];
   sort_entity?: string; // Optional input_select entity to control sorting
+  notification_service?: string; // Service to use for notifications (e.g., notify.mobile_app_iphone)
 }
 
 export enum DisplayType {

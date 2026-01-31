@@ -166,6 +166,16 @@ export class FlowerCardEditor extends LitElement {
           ></ha-textfield>
         </div>
 
+        <!-- Notification Service -->
+        <div class="form-row">
+          <ha-textfield
+            label="Notification Service (e.g., notify.mobile_app_test)"
+            .value="${this._config.notification_service || ""}"
+            .configValue="${"notification_service"}"
+            @change="${this._valueChanged}"
+          ></ha-textfield>
+        </div>
+
         <!-- Battery Sensor -->
         <div class="form-row">
           <ha-entity-picker
