@@ -296,48 +296,61 @@ export const style = css`
       display: none;
     }
   }
-  .plant-info-overlay {
-    opacity: 0;
-    visibility: hidden;
-    position: absolute;
-    padding: 12px;
-    background: var(
-      --ha-card-background,
-      var(--card-background-color, #1c1c1c)
-    ) !important;
-    color: var(--primary-text-color) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-    z-index: 9999 !important;
-    border-radius: 8px;
-    width: 320px;
-    left: 40px;
-    top: 10px;
-    transition:
-      opacity 0.2s ease-in-out,
-      visibility 0.2s;
-    pointer-events: none;
+  .info-button {
+    cursor: pointer;
+    color: var(--secondary-text-color);
+    margin-left: 8px;
+    --mdc-icon-size: 18px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .info-button:hover {
+    opacity: 1;
+    color: var(--primary-color);
+  }
+  .plant-info-panel {
+    padding: 16px;
+    background: var(--secondary-background-color);
+    border-top: 1px solid var(--divider-color);
     font-size: 0.9em;
-    line-height: 1.4;
-    border: 1px solid var(--divider-color);
+    position: relative;
+    border-radius: 0 0 var(--ha-card-border-radius, 12px)
+      var(--ha-card-border-radius, 12px);
   }
-  .image-container:hover .plant-info-overlay {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-  .plant-info-overlay .info-item {
-    margin-bottom: 8px;
-  }
-  .plant-info-overlay .info-item:last-child {
-    margin-bottom: 0;
-  }
-  .plant-info-overlay .info-label {
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
     font-weight: bold;
-    color: var(--accent-color);
-    display: block;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+  }
+  .panel-header ha-icon {
+    cursor: pointer;
+    --mdc-icon-size: 20px;
+    color: var(--secondary-text-color);
+  }
+  .panel-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .plant-info-panel .info-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .plant-info-panel .info-label {
+    font-weight: bold;
+    color: var(--secondary-text-color);
     font-size: 0.8em;
     text-transform: uppercase;
+    margin-bottom: 2px;
   }
-  .plant-info-overlay .info-value {
-    display: block;
+  .plant-info-panel .info-value {
+    color: var(--primary-text-color);
+    word-break: break-word;
   }
 `;

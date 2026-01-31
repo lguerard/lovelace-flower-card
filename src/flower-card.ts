@@ -1,5 +1,5 @@
 import { CSSResult, HTMLTemplateResult, LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { HomeAssistant } from "custom-card-helpers";
 import { style } from "./styles";
 import {
@@ -44,6 +44,8 @@ console.info(
 export default class FlowerCard extends LitElement {
   @property() _hass?: any;
   @property() config?: FlowerCardConfig;
+
+  @state() private _showInfo = false;
 
   private stateObj: HomeAssistantEntity | undefined;
   private previousFetchDate: number;
@@ -250,8 +252,14 @@ export default class FlowerCard extends LitElement {
     }
   }
 
-  private _renderPlantInfoOverlay(): HTMLTemplateResult {
-    if (!this.plantinfo || !this.plantinfo.result) return html``;
+  private _toggleInfo(ev: Event): void {
+    ev.stopPropagation();
+    this._showInfo = !this._showInfo;
+  }
+
+  private _renderPlantInfoPanel(): HTMLTemplateResult {
+    if (!this._showInfo || !this.plantinfo || !this.plantinfo.result)
+      return html``;
 
     const result = this.plantinfo.result || {};
     const attr = this.stateObj.attributes;
@@ -270,11 +278,21 @@ export default class FlowerCard extends LitElement {
       },
       {
         label: "Category",
-        value: result.category || attr.category || attr.plant_category,
+        value:
+          result.category ||
+          attr.category ||
+          attr.plant_category ||
+          result.type ||
+          attr.type,
       },
       {
         label: "Origin",
-        value: result.origin || attr.origin || attr.plant_origin,
+        value:
+          result.origin ||
+          attr.origin ||
+          attr.plant_origin ||
+          result.native_location ||
+          attr.native_location,
       },
       {
         label: "Common names",
@@ -296,15 +314,21 @@ export default class FlowerCard extends LitElement {
     if (items.length === 0) return html``;
 
     return html`
-      <div class="plant-info-overlay">
-        ${items.map(
-          (item) => html`
-            <div class="info-item">
-              <span class="info-label">${item.label}</span>
-              <span class="info-value">${item.value}</span>
-            </div>
-          `,
-        )}
+      <div class="plant-info-panel">
+        <div class="panel-header">
+          <span>Plant Details</span>
+          <ha-icon icon="mdi:close" @click="${this._toggleInfo}"></ha-icon>
+        </div>
+        <div class="panel-content">
+          ${items.map(
+            (item) => html`
+              <div class="info-item">
+                <span class="info-label">${item.label}</span>
+                <span class="info-value">${item.value}</span>
+              </div>
+            `,
+          )}
+        </div>
       </div>
     `;
   }
@@ -378,7 +402,6 @@ export default class FlowerCard extends LitElement {
             ? html`
                 <div class="image-container">
                   <img src="${this._resolvedImageUrl || missingImage}" />
-                  ${this._renderPlantInfoOverlay()}
                 </div>
               `
             : ""}
@@ -386,6 +409,12 @@ export default class FlowerCard extends LitElement {
             <div class="name-area-container">
               <span id="name">
                 <span class="name-text">${displayName}</span>
+                <ha-icon
+                  class="info-button"
+                  icon="mdi:information-outline"
+                  @click="${this._toggleInfo}"
+                  title="Plant Information"
+                ></ha-icon>
                 <ha-icon
                   .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
                     ? "alert-circle-outline"
@@ -410,7 +439,7 @@ export default class FlowerCard extends LitElement {
           >
         </div>
         <div class="divider"></div>
-        ${renderAttributes(this)}
+        ${renderAttributes(this)} ${this._renderPlantInfoPanel()}
       </ha-card>
     `;
   }
