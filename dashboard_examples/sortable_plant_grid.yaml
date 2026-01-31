@@ -1,41 +1,46 @@
-# This example shows how to use an input_select to control the sorting of auto-entities
+# Cet exemple montre comment utiliser un 'input_select' pour trier dynamiquement vos plantes.
 #
-# Pre-requisite: Create an input_select in Home Assistant
-# input_select:
-#   plant_sort_order:
-#     name: Sort plants by
-#     options:
-#       - name
-#       - area
-#       - next_watering
-#     initial: name
-#     icon: mdi:sort
+# Pré-requis : Créer un helper 'input_select' dans Home Assistant (via Paramètres -> Appareils & Services -> Entrées)
+# Nom : Mode de tri plantes
+# ID : input_select.plant_sort_order
+# Options :
+#   - Nom
+#   - Pièce
+#   - Arrosage
 
 type: vertical-stack
 cards:
-- type: entities
-  entities:
-  - entity: input_select.plant_sort_order
-    name: Trier par
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: menu
+      - type: template
+        content: "Tri : {{ states('input_select.plant_sort_order') }}"
+        icon: mdi:sort
+        tap_action:
+          action: call-service
+          service: input_select.select_next
+          target:
+            entity_id: input_select.plant_sort_order
 
-- type: custom:auto-entities
-  card:
-    type: grid
-    columns: 2
-    square: false
-  filter:
-    include:
-    - domain: plant
-      options:
-        type: custom:flower-card
-        # Link to the sort entity so you can cycle it from ANY card!
-        sort_entity: input_select.plant_sort_order
-  sort:
-    template: >
-      {% set sort_order = states('input_select.plant_sort_order') %} {% if sort_order == 'area' %}
-        {{ {'method': 'attribute', 'attribute': 'area'} }}
-      {% elif sort_order == 'next_watering' %}
-        {{ {'method': 'attribute', 'attribute': 'next_watering'} }}
-      {% else %}
-        {{ {'method': 'friendly_name'} }}
-      {% endif %}
+  - type: custom:auto-entities
+    card:
+      type: grid
+      columns: 2
+      square: false
+    filter:
+      include:
+        - domain: plant
+          options:
+            type: custom:flower-card
+            sort_entity: input_select.plant_sort_order
+    sort:
+      template: >
+        {% set sort_order = states('input_select.plant_sort_order') | lower %}
+        {% if sort_order == 'pièce' %}
+          {{ {'method': 'attribute', 'attribute': 'area'} }}
+        {% elif sort_order == 'arrosage' %}
+          {{ {'method': 'attribute', 'attribute': 'next_watering', 'numeric': true} }}
+        {% else %}
+          {{ {'method': 'friendly_name'} }}
+        {% endif %}
+
