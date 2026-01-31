@@ -287,12 +287,17 @@ export default class FlowerCard extends LitElement {
       },
       {
         label: "Origin",
-        value:
-          result.origin ||
-          attr.origin ||
-          attr.plant_origin ||
-          result.native_location ||
-          attr.native_location,
+        value: (() => {
+          const originVal =
+            result.origin ||
+            result.origins ||
+            attr.origin ||
+            attr.origins ||
+            attr.plant_origin ||
+            result.native_location ||
+            attr.native_location;
+          return Array.isArray(originVal) ? originVal.join(", ") : originVal;
+        })(),
       },
       {
         label: "Common names",
