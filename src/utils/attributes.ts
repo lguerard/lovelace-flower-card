@@ -445,7 +445,7 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
             </div>
           `
         : ""}
-      ${showUnits
+      ${showUnits || isTempOrHum
         ? html`<div
             class="header"
             style="${isTempOrHum ? "flex-grow: 1;" : ""}"
@@ -454,7 +454,9 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
               class="value"
               style="${isTempOrHum && hasLimits ? `color: ${color}` : ""}"
               >${display_val}</span
-            >&nbsp;<span class="unit">${unsafeHTML(label)}</span>
+            >${showUnits
+              ? html` <span class="unit">${unsafeHTML(label)}</span>`
+              : ""}
           </div>`
         : ""}
     </div>

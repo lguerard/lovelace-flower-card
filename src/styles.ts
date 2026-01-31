@@ -32,11 +32,11 @@ export const style = css`
   }
   .header {
     padding-top: 8px;
-    height: 72px;
+    min-height: 72px;
   }
   .header-compact {
     padding-top: 4px;
-    height: 55px;
+    min-height: 55px;
   }
   .attribute .header,
   .attribute .header-compact {

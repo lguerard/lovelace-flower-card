@@ -249,9 +249,9 @@ export default class FlowerCard extends LitElement {
     const species = this.stateObj.attributes.species;
     const entityId = this.config.entity!;
     // @ts-ignore
-    const areaId = this._hass.entities[entityId]?.area_id;
+    const areaId = this._hass.entities ? this._hass.entities[entityId]?.area_id : null;
     // @ts-ignore
-    const area = areaId ? this._hass.areas[areaId]?.name : null;
+    const area = areaId && this._hass.areas ? this._hass.areas[areaId]?.name : this.stateObj.attributes.area || null;
 
     const displayName =
       this.config.name || this.stateObj.attributes.friendly_name;
