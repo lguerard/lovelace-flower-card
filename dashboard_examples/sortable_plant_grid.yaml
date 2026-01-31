@@ -1,56 +1,49 @@
 # Dashboard complet : Page dédiée aux plantes avec tri dynamique
-# 
-# Pré-requis : Créer un helper 'input_select.plant_sort_order' dans Home Assistant.
-# Options suggérées : Nom, Pièce, Arrosage
+# Copiez ce code dans l'Éditeur de configuration brute de votre tableau de bord.
 
-title: Tableau de bord Plantes
+title: Mes Plantes
 views:
-  - title: Mes Plantes
-    path: plantes
-    icon: mdi:flower
+- title: Plantes
+  path: plantes
+  icon: mdi:flower
+  cards:
+  - type: vertical-stack
     cards:
-      - type: vertical-stack
-        cards:
-          # ÉLÉMENT 1 : Sélecteur de tri (nécessite l'ID correct de votre select)
-          - type: custom:mushroom-chips-card
-            chips:
-              - type: menu
-              - type: template
-                content: "Tri : {{ states('input_select.plant_sort_order') | capitalize }}"
-                icon: mdi:sort
-                tap_action:
-                  action: call-service
-                  service: input_select.select_next
-                  target:
-                    entity_id: input_select.plant_sort_order
+    # 1. Barre de contrôle Mushroom pour le tri
+    - type: custom:mushroom-chips-card
+      chips:
+      - type: template
+        content: "Tri : {{ states('input_select.plant_sort_order') | capitalize | default('Nom') }}"
+        icon: mdi:sort
+        tap_action:
+          action: call-service
+          service: input_select.select_next
+          target:
+            entity_id: input_select.plant_sort_order
 
-          # ÉLÉMENT 2 : La grille de plantes dynamique
-          - type: custom:auto-entities
-            card:
-              type: grid
-              columns: 2
-              square: false
-            show_empty: false
-            filter:
-              template: >
-                {% set order = states('input_select.plant_sort_order') | lower %}
-                {% set plants = states.plant | list %}
-                
-                {# Logique de tri Jinja2 #}
-                {% if 'pièce' in order or 'piece' in order %}
-                  {% set sorted = plants | sort(attribute='attributes.area') %}
-                {% elif 'arrosage' in order %}
-                  {% set sorted = plants | sort(attribute='attributes.next_watering') %}
-                {% else %}
-                  {% set sorted = plants | sort(attribute='attributes.friendly_name') %}
-                {% endif %}
-                
-                {# Génération des cartes flower-card #}
-                {% for p in sorted %}
-                  {{ {
-                    'type': 'custom:flower-card',
-                    'entity': p.entity_id,
-                    'sort_entity': 'input_select.plant_sort_order'
-                  } }},
-                {% endfor %}
-
+    # 2. Grille de plantes auto-alimentée
+    - type: custom:auto-entities
+      show_empty: false
+      card:
+        type: grid
+        columns: 2
+        square: false
+      card_param: cards
+      filter:
+        include:
+        - domain: plant
+          options:
+            type: custom:flower-card
+            sort_entity: input_select.plant_sort_order
+      sort:
+        template: >
+          {%- set o = states('input_select.plant_sort_order') | lower -%} {%- if 'arrosage' in o -%}
+            method: attribute
+            attribute: next_watering
+            numeric: true
+          {%- elif 'pièce' in o or 'piece' in o -%}
+            method: attribute
+            attribute: area
+          {%- else -%}
+            method: friendly_name
+          {%- endif -%}
