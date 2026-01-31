@@ -30,8 +30,9 @@ export function calculate_next_watering(
   const maxMoisture = moistureAttribute.max;
 
   // Default daily water drop (in moisture units)
-  // Assuming a plant drops from max to min in about 7 days on average
-  let dailymoistureLoss = (maxMoisture - minMoisture) / 7;
+  // Use baseline watering frequency if available, otherwise assume 7 days
+  const baselineDays = plantInfo.result.watering || 7;
+  let dailymoistureLoss = (maxMoisture - minMoisture) / baselineDays;
   if (dailymoistureLoss <= 0) dailymoistureLoss = 5;
 
   const tempSensorId = config.temperature_sensor;
