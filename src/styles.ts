@@ -166,9 +166,6 @@ export const style = css`
   .attribute.tooltip.width-100 .meter-container {
     margin-right: 15px;
   }
-  .attribute.tooltip.width-100 .header {
-    display: none;
-  }
   .divider {
     height: 1px;
     background-color: #727272;
