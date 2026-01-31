@@ -453,12 +453,11 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
           `
         : ""}
       ${showUnits || isTempOrHum
-        ? html`<div class="attribute-header">
-            <span
-              class="value"
-              style="${isTempOrHum && hasLimits ? `color: ${color}` : ""}"
-              >${display_val}</span
-            >${showUnits
+        ? html`<div
+            class="attribute-header"
+            style="${isTempOrHum && hasLimits ? `color: ${color}` : ""}"
+          >
+            <span class="value">${display_val}</span>${showUnits
               ? html` <span class="unit">${unsafeHTML(label)}</span>`
               : ""}
           </div>`
