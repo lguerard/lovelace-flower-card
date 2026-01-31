@@ -20,6 +20,7 @@ export const style = css`
     white-space: nowrap;
     display: flex;
     align-items: center;
+    justify-content: center;
     width: 50%;
   }
   .attribute-header {
