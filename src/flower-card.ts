@@ -225,6 +225,13 @@ export default class FlowerCard extends LitElement {
     this.config = config;
   }
 
+  private _markWatered(ev: Event): void {
+    ev.stopPropagation();
+    this._hass.callService("plant", "watered", {
+      entity_id: this.config?.entity,
+    });
+  }
+
   render(): HTMLTemplateResult {
     if (!this.config || !this._hass) return html``;
 
@@ -274,7 +281,15 @@ export default class FlowerCard extends LitElement {
                   : ""}"
               ></ha-icon>
             </span>
-            <span id="next-watering">${nextWatering}</span>
+            <span id="next-watering">
+              ${nextWatering}
+              <ha-icon
+                class="water-button"
+                icon="mdi:water-pump"
+                @click="${(e: Event) => this._markWatered(e)}"
+                title="Mark as watered"
+              ></ha-icon>
+            </span>
           </div>
           <span id="battery"
             >${renderExtraBadges(this)}${renderBattery(this)}</span
