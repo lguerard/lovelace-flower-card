@@ -38,7 +38,7 @@ export interface HomeAssistantEntity extends HassEntity {
 }
 
 export interface PlantInfo {
-  result: Record<string, PlantAttribute | string | number | undefined>;
+  result: any;
 }
 
 export interface PlantAttribute {
