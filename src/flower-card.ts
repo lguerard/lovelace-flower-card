@@ -297,7 +297,7 @@ export default class FlowerCard extends LitElement {
           ${!hideSpecies ? html`<span id="species">${species}</span>` : ""}
         </div>
         <div class="divider"></div>
-        ${renderAttributes(this, Object.keys(this.plantinfo?.result || {}))}
+        ${renderAttributes(this)}
       </ha-card>
     `;
   }

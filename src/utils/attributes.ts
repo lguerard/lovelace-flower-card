@@ -263,17 +263,14 @@ export const renderExtraBadges = (card: FlowerCard) => {
  * TemplateResult[]:
  *     An array of Lit templates for the monitored attributes.
  */
-export const renderAttributes = (
-  card: FlowerCard,
-  available_attributes: string[] = [],
-): TemplateResult[] => {
+export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
   const displayed: DisplayedAttributes = {};
-  let monitored = card.config.show_bars || default_show_bars;
+  const monitored = card.config.show_bars || default_show_bars;
 
   if (card.plantinfo && card.plantinfo.result) {
     const result = card.plantinfo.result;
     for (const elem of monitored) {
-      let attr = result[elem];
+      const attr = result[elem];
       let sensorId = attr?.sensor;
 
       // Fallback for temperature and humidity if plant entity doesn't have it
@@ -290,22 +287,27 @@ export const renderAttributes = (
         sensorId = card.config.humidity_sensor || result.room_humidity;
       }
 
+      const entityState = sensorId ? card._hass.states[sensorId] : undefined;
+
+      // Decide if we should show this attribute
+      const hasValidSensor =
+        entityState &&
+        entityState.state !== "unknown" &&
+        entityState.state !== "unavailable";
+
+      const isExplicit =
+        card.config.show_bars && card.config.show_bars.includes(elem);
+
+      // If no sensor and not explicitly requested, skip it
+      if (!hasValidSensor && !isExplicit && !attr?.current) {
+        continue;
+      }
+
       if (attr || sensorId) {
-        const entityState = sensorId ? card._hass.states[sensorId] : undefined;
-
-        // Only show if we have a valid sensor/state
-        if (
-          !entityState ||
-          entityState.state === "unknown" ||
-          entityState.state === "unavailable"
-        ) {
-          if (!attr) continue; // Skip if no fallback and no plant attribute
-        }
-
-        const current = entityState
+        const current = hasValidSensor
           ? Number(entityState.state)
           : attr?.current || 0;
-        const display_state = entityState
+        const display_state = hasValidSensor
           ? card._hass.formatEntityState(entityState).replace(/[^\d,.+-]/g, "")
           : String(current);
         const unit_of_measurement =
