@@ -35,8 +35,10 @@ export function calculate_next_watering(
   let dailymoistureLoss = (maxMoisture - minMoisture) / baselineDays;
   if (dailymoistureLoss <= 0) dailymoistureLoss = 5;
 
-  const tempSensorId = config.temperature_sensor || plantInfo.result.room_temperature;
-  const humiditySensorId = config.humidity_sensor || plantInfo.result.room_humidity;
+  const tempSensorId =
+    config.temperature_sensor || plantInfo.result.room_temperature;
+  const humiditySensorId =
+    config.humidity_sensor || plantInfo.result.room_humidity;
 
   // Adjustment factor based on environment
   let adjustmentFactor = 1.0;
@@ -58,7 +60,8 @@ export function calculate_next_watering(
     }
   }
 
-  const weatherEntityId = config.weather_entity || plantInfo.result.weather_entity;
+  const weatherEntityId =
+    config.weather_entity || plantInfo.result.weather_entity;
   if (weatherEntityId && hass.states[weatherEntityId]) {
     const weather = hass.states[weatherEntityId];
     // If it's outdoor, weather has more impact
@@ -67,10 +70,11 @@ export function calculate_next_watering(
     const isRainingSoon = forecast
       .slice(0, 2)
       .some(
-        (day: any) =>
+        (day: { condition: string; precipitation?: number }) =>
           ["rainy", "pouring", "hail", "snowy", "snowy-rainy"].includes(
             day.condition,
-          ) || day.precipitation > 2,
+          ) ||
+          (day.precipitation !== undefined && day.precipitation > 2),
       );
 
     if (isRainingSoon) {
