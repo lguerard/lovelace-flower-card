@@ -11,6 +11,7 @@ views:
     cards:
     # 1. Barre de contrôle Mushroom pour le tri
     - type: custom:mushroom-chips-card
+      alignment: center
       chips:
       - type: template
         content: "Tri : {{ states('input_select.plant_sort_order') | capitalize | default('Nom') }}"

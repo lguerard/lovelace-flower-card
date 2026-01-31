@@ -5,7 +5,7 @@ export const style = css`
     overflow: visible !important;
   }
   .card-margin-top {
-    margin-top: 32px;
+    margin-top: 16px;
   }
   .attributes {
     display: flex;
@@ -66,7 +66,7 @@ export const style = css`
   .header .image-container {
     margin-left: 16px;
     margin-right: 16px;
-    margin-top: -32px;
+    margin-top: -16px;
   }
   .header-compact .image-container {
     margin-left: 8px;
@@ -76,6 +76,7 @@ export const style = css`
   .image-container > img {
     border-radius: 50%;
     object-fit: cover;
+    background-color: var(--secondary-background-color);
     box-shadow: var(
       --ha-card-box-shadow,
       0 2px 2px 0 rgba(0, 0, 0, 0.14),
