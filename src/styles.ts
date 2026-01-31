@@ -13,7 +13,7 @@ export const style = css`
     padding: 2px;
   }
   .attribute ha-icon {
-    margin-right: 10px;
+    margin-right: 5px;
     margin-left: 5px;
   }
   .attribute {
