@@ -256,9 +256,13 @@ export const style = css`
     transform: translateX(-50%) translateY(-180%);
     background: grey;
     color: white;
-    white-space: nowrap;
+    white-space: pre-line;
     z-index: 2;
     border-radius: 2px;
+    min-width: 150px;
+    text-align: left;
+    font-size: 0.9em;
+    line-height: 1.2;
     transition:
       opacity 0.2s cubic-bezier(0.64, 0.09, 0.08, 1),
       -webkit-transform 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
@@ -269,6 +273,18 @@ export const style = css`
       opacity 0.2s cubic-bezier(0.64, 0.09, 0.08, 1),
       transform 0.2s cubic-bezier(0.64, 0.09, 0.08, 1),
       -webkit-transform 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
+  }
+  #next-watering.tooltip .tip {
+    top: -5px;
+    left: auto;
+    right: 0;
+    transform: translateY(-100%);
+    -webkit-transform: translateY(-100%);
+  }
+  #next-watering.tooltip:hover .tip {
+    display: block;
+    opacity: 1;
+    visibility: visible;
   }
   .battery.tooltip .tip {
     top: 2em;

@@ -409,6 +409,8 @@ export default class FlowerCard extends LitElement {
       wateringClass = "watering-warning";
     }
 
+    const wateringExplanation = this.stateObj.attributes.watering_explanation;
+
     return html`
       <ha-card class="${haCardCssClass}">
         <div
@@ -443,8 +445,11 @@ export default class FlowerCard extends LitElement {
                 ? html`<span id="species">${species || html`&nbsp;`}</span>`
                 : ""}
             </div>
-            <div id="next-watering" class="${wateringClass}">
+            <div id="next-watering" class="${wateringClass} tooltip">
               <span>${nextWateringValue}</span>
+              ${wateringExplanation
+                ? html`<span class="tip">${wateringExplanation}</span>`
+                : ""}
               <ha-icon
                 class="water-button"
                 icon="mdi:water-pump"
