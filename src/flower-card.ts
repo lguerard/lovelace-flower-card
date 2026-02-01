@@ -254,18 +254,21 @@ export default class FlowerCard extends LitElement {
 
   private _toggleInfo(ev: Event): void {
     ev.stopPropagation();
+    console.log("FlowerCard: Toggling info panel. New state:", !this._showInfo);
     this._showInfo = !this._showInfo;
   }
 
   private async _removePlant(ev: Event): Promise<void> {
     ev.stopPropagation();
+    const displayName = this.config?.name || this.stateObj?.attributes?.friendly_name;
+    console.log("FlowerCard: Attempting to remove plant:", displayName);
+    
     const confirmed = window.confirm(
-      `Êtes-vous sûr de vouloir supprimer définitivement la plante "${
-        this.config?.name || this.stateObj?.attributes?.friendly_name
-      }" ?\n\nCette action supprimera l'intégration et toutes les données associées.`,
+      `Êtes-vous sûr de vouloir supprimer définitivement la plante "${displayName}" ?\n\nCette action supprimera l'intégration et toutes les données associées.`,
     );
 
     if (confirmed) {
+      console.log("FlowerCard: Removal confirmed for:", displayName);
       await this._hass.callService("plant", "remove_plant", {
         entity_id: this.config?.entity,
       });
@@ -457,6 +460,12 @@ export default class FlowerCard extends LitElement {
                   icon="mdi:information-outline"
                   @click="${this._toggleInfo}"
                   title="Plant Information"
+                ></ha-icon>
+                <ha-icon
+                  class="delete-button-main"
+                  icon="mdi:delete-outline"
+                  @click="${this._removePlant}"
+                  title="Supprimer la plante"
                 ></ha-icon>
                 <ha-icon
                   .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"

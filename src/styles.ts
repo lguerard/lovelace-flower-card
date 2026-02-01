@@ -335,6 +335,18 @@ export const style = css`
     opacity: 1;
     color: var(--primary-color);
   }
+  .delete-button-main {
+    cursor: pointer;
+    color: var(--error-color, #db4437);
+    margin-left: 8px;
+    --mdc-icon-size: 18px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .delete-button-main:hover {
+    opacity: 1;
+    color: var(--error-color, #b00020);
+  }
   .plant-info-panel {
     padding: 16px;
     background: var(--secondary-background-color);
