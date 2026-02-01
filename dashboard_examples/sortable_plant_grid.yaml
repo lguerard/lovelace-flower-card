@@ -39,20 +39,42 @@ views:
         square: false
       card_param: cards
       filter:
-        include:
-        - domain: plant
-          options:
-            type: custom:flower-card
-            sort_entity: input_select.plant_sort_order
-      sort:
         template: >
-          {%- set o = states('input_select.plant_sort_order') | lower -%} {%- if 'arrosage' in o -%}
-            method: attribute
-            attribute: next_watering
-            numeric: true
-          {%- elif 'pièce' in o or 'piece' in o -%}
-            method: attribute
-            attribute: area
-          {%- else -%}
-            method: friendly_name
-          {%- endif -%}
+          {% set sort_order = states('input_select.plant_sort_order') | lower %}
+          {% set entities = states.plant | map(attribute='entity_id') | list %}
+          
+          {# On crée une liste d'objets avec les infos de tri #}
+          {% set plants = [] %}
+          {% for entity in entities %}
+            {% set state = states[entity] %}
+            {% set next_watering = state.attributes.next_watering | default('0 j') %}
+            {# On extrait juste le nombre pour le tri de l'arrosage #}
+            {% set days = next_watering.split(' ')[0] | int %}
+            
+            {% set plant_obj = {
+              'entity': entity,
+              'name': state.attributes.friendly_name,
+              'area': state.attributes.area | default(''),
+              'watering': days
+            } %}
+            {% set plants = plants + [plant_obj] %}
+          {% endfor %}
+
+          {# Tri de la liste #}
+          {% if 'arrosage' in sort_order %}
+            {% set sorted_plants = plants | sort(attribute='watering') %}
+          {% elif 'pièce' in sort_order or 'piece' in sort_order %}
+            {% set sorted_plants = plants | sort(attribute='area') %}
+          {% else %}
+            {% set sorted_plants = plants | sort(attribute='name') %}
+          {% endif %}
+
+          {# Sortie au format HL (auto-entities attend une liste de cards config) #}
+          {% for plant in sorted_plants %}
+            {{ {
+              'type': 'custom:flower-card',
+              'entity': plant.entity,
+              'sort_entity': 'input_select.plant_sort_order'
+            } | tojson }},
+          {% endfor %}
+      # On n'a plus besoin du bloc sort: classique car le template gère tout

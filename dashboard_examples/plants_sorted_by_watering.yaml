@@ -32,13 +32,12 @@ views:
           - brightness
           - conductivity
     sort:
-      # Tri par l'attribut next_watering (ISO timestamp)
+      # Tri par le nombre de jours restant avant l'arrosage
       # Les plantes à arroser en premier apparaissent en haut
       method: attribute
-      attribute: next_watering
-      numeric: false
+      attribute: next_watering_days
+      numeric: true
       reverse: false
-      # ignore_case n'est pas nécessaire pour les timestamps
     card:
       type: grid
       columns: 1
@@ -60,8 +59,8 @@ views:
           - conductivity
     sort:
       method: attribute
-      attribute: next_watering
-      numeric: false
+      attribute: next_watering_days
+      numeric: true
       reverse: false
     card:
       type: vertical-stack

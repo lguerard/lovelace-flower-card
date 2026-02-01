@@ -52,6 +52,14 @@
                 @click="${t=>this._markWatered(t)}"
                 title="Mark as watered"
               ></ha-icon>
+              ${this.config?.sort_entity?n.html`
+                    <ha-icon
+                      class="sort-button"
+                      icon="mdi:sort"
+                      @click="${t=>this._toggleSort(t)}"
+                      title="Changer l'ordre de tri"
+                    ></ha-icon>
+                  `:""}
             </div>
           </div>
           <span id="battery"

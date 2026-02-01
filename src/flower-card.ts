@@ -451,6 +451,16 @@ export default class FlowerCard extends LitElement {
                 @click="${(e: Event) => this._markWatered(e)}"
                 title="Mark as watered"
               ></ha-icon>
+              ${this.config?.sort_entity
+                ? html`
+                    <ha-icon
+                      class="sort-button"
+                      icon="mdi:sort"
+                      @click="${(e: Event) => this._toggleSort(e)}"
+                      title="Changer l'ordre de tri"
+                    ></ha-icon>
+                  `
+                : ""}
             </div>
           </div>
           <span id="battery"
