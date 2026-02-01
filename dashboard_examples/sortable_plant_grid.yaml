@@ -28,6 +28,9 @@ views:
         icon_color: green
         tap_action:
           action: navigate
+          navigation_path: "/config/integrations/dashboard"
+        hold_action:
+          action: navigate
           navigation_path: "/config/integrations/dashboard/add?domain=plant"
 
     # 2. Grille de plantes auto-alimentée
