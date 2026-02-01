@@ -257,6 +257,21 @@ export default class FlowerCard extends LitElement {
     this._showInfo = !this._showInfo;
   }
 
+  private async _removePlant(ev: Event): Promise<void> {
+    ev.stopPropagation();
+    const confirmed = window.confirm(
+      `Êtes-vous sûr de vouloir supprimer définitivement la plante "${
+        this.config?.name || this.stateObj?.attributes?.friendly_name
+      }" ?\n\nCette action supprimera l'intégration et toutes les données associées.`,
+    );
+
+    if (confirmed) {
+      await this._hass.callService("plant", "remove_plant", {
+        entity_id: this.config?.entity,
+      });
+    }
+  }
+
   private _renderPlantInfoPanel(): HTMLTemplateResult {
     if (!this._showInfo || !this.plantinfo || !this.plantinfo.result)
       return html``;
@@ -334,7 +349,15 @@ export default class FlowerCard extends LitElement {
       <div class="plant-info-panel">
         <div class="panel-header">
           <span>Plant Details</span>
-          <ha-icon icon="mdi:close" @click="${this._toggleInfo}"></ha-icon>
+          <div class="panel-actions">
+            <ha-icon
+              class="delete-button"
+              icon="mdi:delete-outline"
+              @click="${this._removePlant}"
+              title="Supprimer la plante"
+            ></ha-icon>
+            <ha-icon icon="mdi:close" @click="${this._toggleInfo}"></ha-icon>
+          </div>
         </div>
         <div class="panel-content">
           ${items.map(

@@ -360,6 +360,17 @@ export const style = css`
     --mdc-icon-size: 20px;
     color: var(--secondary-text-color);
   }
+  .panel-header .delete-button {
+    color: var(--error-color, #db4437);
+    margin-right: 8px;
+  }
+  .panel-header .delete-button:hover {
+    color: var(--error-color, #b00020);
+  }
+  .panel-actions {
+    display: flex;
+    align-items: center;
+  }
   .panel-content {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
