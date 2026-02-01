@@ -301,21 +301,27 @@ export default class FlowerCard extends LitElement {
             result.native_distribution ||
             attr.native_distribution ||
             result.native_range ||
-            attr.native_range;
+            attr.native_range ||
+            result.distribution ||
+            attr.distribution ||
+            result.native_region ||
+            attr.native_region;
           return Array.isArray(originVal) ? originVal.join(", ") : originVal;
         })(),
       },
       {
         label: "Common names",
-        value: result.common_names
-          ? Array.isArray(result.common_names)
-            ? result.common_names.join(", ")
-            : result.common_names
-          : result.common_name ||
-            result.alias ||
-            result.friendly_name ||
-            attr.common_name ||
-            attr.friendly_name,
+        value: (() => {
+          const names = result.common_names || attr.common_name;
+          if (Array.isArray(names)) {
+            return names
+              .map((n) => (typeof n === "object" ? n.name : n))
+              .join(", ");
+          }
+          return (
+            names || result.alias || result.friendly_name || attr.friendly_name
+          );
+        })(),
       },
     ].filter(
       (item) =>
