@@ -273,10 +273,9 @@ export default class FlowerCard extends LitElement {
   }
 
   private _renderPlantInfoPanel(): HTMLTemplateResult {
-    if (!this._showInfo || !this.plantinfo || !this.plantinfo.result)
-      return html``;
+    if (!this._showInfo) return html``;
 
-    const result = this.plantinfo.result || {};
+    const result = this.plantinfo?.result || {};
     const attr = this.stateObj.attributes;
     const items = [
       {
@@ -343,8 +342,6 @@ export default class FlowerCard extends LitElement {
         item.value !== undefined && item.value !== null && item.value !== "",
     );
 
-    if (items.length === 0) return html``;
-
     return html`
       <div class="plant-info-panel">
         <div class="panel-header">
@@ -359,16 +356,20 @@ export default class FlowerCard extends LitElement {
             <ha-icon icon="mdi:close" @click="${this._toggleInfo}"></ha-icon>
           </div>
         </div>
-        <div class="panel-content">
-          ${items.map(
-            (item) => html`
-              <div class="info-item">
-                <span class="info-label">${item.label}</span>
-                <span class="info-value">${item.value}</span>
+        ${items.length > 0
+          ? html`
+              <div class="panel-content">
+                ${items.map(
+                  (item) => html`
+                    <div class="info-item">
+                      <span class="info-label">${item.label}</span>
+                      <span class="info-value">${item.value}</span>
+                    </div>
+                  `,
+                )}
               </div>
-            `,
-          )}
-        </div>
+            `
+          : ""}
       </div>
     `;
   }
