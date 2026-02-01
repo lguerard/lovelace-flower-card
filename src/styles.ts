@@ -199,14 +199,24 @@ export const style = css`
     cursor: pointer;
     --mdc-icon-size: 18px;
     vertical-align: middle;
+    padding: 6px;
+    margin: -6px;
+    border-radius: 50%;
     transition:
       transform 0.2s,
-      opacity 0.2s;
+      opacity 0.2s,
+      background-color 0.2s;
   }
   .water-button:hover,
   .sort-button:hover {
     transform: scale(1.2);
     opacity: 1;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  .water-button:active,
+  .sort-button:active {
+    transform: scale(0.9);
+    background-color: rgba(255, 255, 255, 0.4);
   }
   .meter-container {
     height: 8px;
