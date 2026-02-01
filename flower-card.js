@@ -41,8 +41,8 @@
                   .icon="mdi:${"problem"==this.stateObj.state.toLowerCase()?"alert-circle-outline":""}"
                 ></ha-icon>
               </span>
-              ${r?n.html`<span id="area">${r}</span>`:""}
-              ${o?"":n.html`<span id="species">${t}</span>`}
+              <span id="area">${r||n.html`&nbsp;`}</span>
+              ${o?"":n.html`<span id="species">${t||n.html`&nbsp;`}</span>`}
             </div>
             <div id="next-watering" class="${_}">
               <span>${f}</span>

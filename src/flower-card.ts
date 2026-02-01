@@ -438,8 +438,10 @@ export default class FlowerCard extends LitElement {
                     : ""}"
                 ></ha-icon>
               </span>
-              ${area ? html`<span id="area">${area}</span>` : ""}
-              ${!hideSpecies ? html`<span id="species">${species}</span>` : ""}
+              <span id="area">${area || html`&nbsp;`}</span>
+              ${!hideSpecies
+                ? html`<span id="species">${species || html`&nbsp;`}</span>`
+                : ""}
             </div>
             <div id="next-watering" class="${wateringClass}">
               <span>${nextWateringValue}</span>
