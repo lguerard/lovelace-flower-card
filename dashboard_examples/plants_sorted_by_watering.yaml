@@ -7,6 +7,18 @@ views:
   path: watering
   icon: mdi:watering-can
   cards:
+  # Bouton pour ajouter une plante
+  - type: custom:mushroom-chips-card
+    alignment: center
+    chips:
+    - type: template
+      content: "Ajouter une plante"
+      icon: mdi:plus
+      icon_color: green
+      tap_action:
+        action: navigate
+        navigation_path: "/config/integrations/dashboard/add?domain=plant"
+
   # Utilise auto-entities avec tri par attribut next_watering
   - type: custom:auto-entities
     filter:

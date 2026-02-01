@@ -22,6 +22,14 @@ views:
           target:
             entity_id: input_select.plant_sort_order
 
+      - type: template
+        content: "Ajouter"
+        icon: mdi:plus-circle
+        icon_color: green
+        tap_action:
+          action: navigate
+          navigation_path: "/config/integrations/dashboard/add?domain=plant"
+
     # 2. Grille de plantes auto-alimentée
     - type: custom:auto-entities
       show_empty: false
