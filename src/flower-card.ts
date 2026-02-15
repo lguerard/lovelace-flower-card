@@ -48,7 +48,7 @@ export default class FlowerCard extends LitElement {
 
   @state() private _showInfo = false;
 
-  private stateObj: HomeAssistantEntity | undefined;
+  public stateObj: HomeAssistantEntity | undefined;
   private previousFetchDate: number;
   private _lastEntityPicture: string | undefined;
   private _resolvedImageUrl: string | undefined;
@@ -430,8 +430,8 @@ export default class FlowerCard extends LitElement {
 
     // Get current light level for shadow opacity
     const illuminance =
-      this.plantinfo?.result?.illuminance?.current ||
-      this.plantinfo?.result?.brightness?.current ||
+      (this.plantinfo?.result as any)?.illuminance?.current ||
+      (this.plantinfo?.result as any)?.brightness?.current ||
       500; // Default to medium light
     const opacity = isNight ? 0.05 : Math.min(0.4, illuminance / 2000 + 0.1);
 

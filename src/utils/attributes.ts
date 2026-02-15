@@ -70,9 +70,19 @@ export const renderWateringStatus = (card: FlowerCard) => {
                 </span>
               `
             : ""}
+          ${watering.smart_watering
+            ? html`
+                <span
+                  class="care-badge smart"
+                  title="Intelligent Assistant: Automated watering frequency"
+                >
+                  <ha-icon icon="mdi:auto-fix"></ha-icon> AUTO
+                </span>
+              `
+            : ""}
           <span
             class="watering-factor ${factor !== 1.0 ? "active" : ""}"
-            title="Adaptive learning factor"
+            title="Adaptive learning factor: Corrects base frequency based on your habits"
           >
             ${factor.toFixed(2)}x
           </span>
@@ -371,7 +381,7 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
   const monitored = card.config.show_bars || default_show_bars;
 
   if (card.plantinfo && card.plantinfo.result) {
-    const result = card.plantinfo.result;
+    const result = card.plantinfo.result as any;
     for (const elem of monitored) {
       const attr = result[elem];
       let sensorId = attr?.sensor;

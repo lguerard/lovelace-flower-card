@@ -44,8 +44,8 @@ export interface PlantInfo {
   result: {
     watering?: WateringInfo;
     health?: HealthInfo;
-    sensors?: Record<string, unknown>;
-    [key: string]: unknown;
+    sensors?: Record<string, any>;
+    [key: string]: any;
   };
 }
 
@@ -56,6 +56,7 @@ export interface WateringInfo {
   needs_watering: boolean;
   explanation?: string;
   water_factor?: number;
+  smart_watering?: boolean;
   forecast_impact?: string;
   tendency?: {
     label: string;
