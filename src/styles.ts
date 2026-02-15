@@ -130,8 +130,8 @@ export const style = css`
     object-fit: cover;
     background-color: var(--secondary-background-color);
     /* Attempt to simulate a "sketch" or "engraving" look */
-    filter: grayscale(100%) contrast(150%) brightness(110%);
-    mix-blend-mode: multiply;
+    /* filter: grayscale(100%) contrast(150%) brightness(110%);
+    mix-blend-mode: multiply; */
   }
   .header .plant-image-container > img {
     width: 88px;
