@@ -44,7 +44,9 @@ export interface PlantInfo {
   result: {
     watering?: WateringInfo;
     health?: HealthInfo;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     sensors?: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
 }

@@ -20,6 +20,7 @@ export function calculate_next_watering(
   config: FlowerCardConfig,
   plantInfo: PlantInfo,
 ): string {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result = plantInfo.result as any;
   const moistureAttribute = result["moisture"];
   if (!moistureAttribute) {
@@ -90,6 +91,7 @@ export function calculate_next_watering(
     const weather = hass.states[weatherEntityId as string];
     // If it's outdoor, weather has more impact
     // check if raining in forecast
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const attributes = weather.attributes as any;
     const forecast = attributes.forecast || [];
     const isRainingSoon = forecast
