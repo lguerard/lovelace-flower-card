@@ -6,9 +6,9 @@ export const style = css`
     isolation: isolate;
     border-radius: 2px 4px 2px 4px / 4px 2px 4px 2px;
     background: #fdfaf3; /* Journal Parchment */
-    box-shadow: 
-      2px 3px 20px rgba(0,0,0,0.1),
-      inset 0 0 50px rgba(0,0,0,0.02);
+    box-shadow:
+      2px 3px 20px rgba(0, 0, 0, 0.1),
+      inset 0 0 50px rgba(0, 0, 0, 0.02);
     border: 1px solid #e0d0b0;
     color: #4b3d2d;
     position: relative;
@@ -16,7 +16,10 @@ export const style = css`
   ha-card::before {
     content: "";
     position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     background-image: url("https://www.transparenttextures.com/patterns/p6.png");
     opacity: 0.2;
     pointer-events: none;
@@ -91,7 +94,7 @@ export const style = css`
     z-index: 2;
     padding: 6px;
     background: white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     border-bottom: 15px solid white; /* Polaroid bottom */
     transform: rotate(2deg); /* Organic placement tilt */
   }
@@ -105,7 +108,7 @@ export const style = css`
     background: rgba(220, 220, 180, 0.5); /* Washi Tape */
     backdrop-filter: blur(1px);
     z-index: 3;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
   .header .plant-image-container {
     margin-left: 16px;
@@ -289,15 +292,18 @@ export const style = css`
     display: flex;
     align-items: center;
     gap: 4px;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
     position: relative;
-    border: 1px dashed rgba(255,255,255,0.4);
+    border: 1px dashed rgba(255, 255, 255, 0.4);
   }
   .care-badge::after {
     content: "";
     position: absolute;
-    top: -2px; left: -2px; right: -2px; bottom: -2px;
-    border: 1px solid rgba(0,0,0,0.1);
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     pointer-events: none;
   }
   .care-badge.misting {
@@ -326,15 +332,24 @@ export const style = css`
   .health-bar-bg {
     flex: 1;
     height: 8px;
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0, 0, 0, 0.05);
     border-radius: 10px 5px 12px 3px / 3px 12px 5px 10px; /* Rough edges */
     overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
   }
   .health-bar-fill {
     height: 100%;
     transition: width 0.5s ease-out;
-    background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
     background-size: 10px 10px; /* Hatching pattern */
   }
   .health-value {
@@ -396,19 +411,28 @@ export const style = css`
   /* Meter / Attributes */
   .meter-container {
     height: 10px;
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0, 0, 0, 0.05);
     border-radius: 8px 4px 10px 2px / 2px 10px 4px 8px;
     flex-grow: 1;
     margin-right: 10px;
     overflow: hidden;
     position: relative;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
   }
   .meter-bar {
     height: 100%;
     border-radius: inherit;
     transition: width 0.5s ease-in-out;
-    background-image: linear-gradient(135deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.1) 75%,
+      transparent 75%,
+      transparent
+    );
     background-size: 10px 10px;
   }
   .attribute.tooltip.width-100 .meter-container {
