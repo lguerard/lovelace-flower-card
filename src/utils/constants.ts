@@ -9,6 +9,7 @@ export const default_show_bars = [
   "temperature",
   "illuminance",
   "humidity",
+  "dli",
 ];
 
 export const missingImage =
