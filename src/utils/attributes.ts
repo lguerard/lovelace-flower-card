@@ -19,7 +19,6 @@ export const renderWateringStatus = (card: FlowerCard) => {
   if (!watering) return html``;
 
   const nextDate = new Date(watering.next_watering);
-  const isOverdue = nextDate.getTime() < Date.now();
   const factor = watering.water_factor || 1.0;
 
   // Simple relative date formatting
