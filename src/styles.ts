@@ -1,6 +1,8 @@
 import { css } from "lit";
 
 export const style = css`
+  @import url("https://fonts.googleapis.com/css2?family=Indie+Flower&family=Patrick+Hand&display=swap");
+
   ha-card {
     overflow: visible !important;
     isolation: isolate;
@@ -12,6 +14,9 @@ export const style = css`
     border: 1px solid #e0d0b0;
     color: #4b3d2d;
     position: relative;
+    font-family:
+      "Patrick Hand", "Bradley Hand", "Chilanka", "TSCu_Comic", "casual",
+      "cursive";
   }
   ha-card::before {
     content: "";
@@ -124,7 +129,9 @@ export const style = css`
     border-radius: 2px;
     object-fit: cover;
     background-color: var(--secondary-background-color);
-    filter: sepia(0.2) contrast(1.1); /* Old photo look */
+    /* Attempt to simulate a "sketch" or "engraving" look */
+    filter: grayscale(100%) contrast(150%) brightness(110%);
+    mix-blend-mode: multiply;
   }
   .header .plant-image-container > img {
     width: 88px;

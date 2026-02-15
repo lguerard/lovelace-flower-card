@@ -54,6 +54,20 @@ export default class FlowerCard extends LitElement {
   private _resolvedImageUrl: string | undefined;
 
   plantinfo: PlantInfo;
+
+  connectedCallback() {
+    super.connectedCallback();
+    // Inject fonts into document head for reliable loading
+    if (!document.getElementById("flower-card-fonts")) {
+      const link = document.createElement("link");
+      link.id = "flower-card-fonts";
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Indie+Flower&family=Patrick+Hand&display=swap";
+      document.head.appendChild(link);
+    }
+  }
+
   set hass(hass: HomeAssistant) {
     this._hass = hass;
     this.stateObj = this.config?.entity
