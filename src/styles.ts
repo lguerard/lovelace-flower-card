@@ -4,9 +4,27 @@ export const style = css`
   ha-card {
     overflow: visible !important;
     isolation: isolate;
-    border-radius: 24px 8px 32px 12px / 12px 32px 10px 24px;
-    background: var(--card-background-color);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    border-radius: 2px 4px 2px 4px / 4px 2px 4px 2px;
+    background: #fdfaf3; /* Journal Parchment */
+    box-shadow:
+      2px 3px 20px rgba(0, 0, 0, 0.1),
+      inset 0 0 50px rgba(0, 0, 0, 0.02);
+    border: 1px solid #e0d0b0;
+    color: #4b3d2d;
+    position: relative;
+  }
+  ha-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url("https://www.transparenttextures.com/patterns/p6.png");
+    opacity: 0.2;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 0;
   }
   .card-margin-top {
     margin-top: 24px;
@@ -73,7 +91,24 @@ export const style = css`
   .plant-image-container {
     position: relative;
     float: left;
-    z-index: 1;
+    z-index: 2;
+    padding: 6px;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border-bottom: 15px solid white; /* Polaroid bottom */
+    transform: rotate(2deg); /* Organic placement tilt */
+  }
+  .plant-image-container::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 20%;
+    width: 60%;
+    height: 20px;
+    background: rgba(220, 220, 180, 0.5); /* Washi Tape */
+    backdrop-filter: blur(1px);
+    z-index: 3;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
   .header .plant-image-container {
     margin-left: 16px;
@@ -86,15 +121,10 @@ export const style = css`
     margin-top: 0px;
   }
   .plant-image-container > img {
-    border-radius: 50%;
+    border-radius: 2px;
     object-fit: cover;
     background-color: var(--secondary-background-color);
-    box-shadow: var(
-      --ha-card-box-shadow,
-      0 2px 2px 0 rgba(0, 0, 0, 0.14),
-      0 1px 5px 0 rgba(0, 0, 0, 0.12),
-      0 3px 1px -2px rgba(0, 0, 0, 0.2)
-    );
+    filter: sepia(0.2) contrast(1.1); /* Old photo look */
   }
   .header .plant-image-container > img {
     width: 88px;
@@ -117,8 +147,11 @@ export const style = css`
     display: flex;
     align-items: center;
     width: 100%;
-    font-family: "Georgia", serif;
-    font-size: 1.3em;
+    font-family: "Indie Flower", "cursive", serif;
+    font-size: 1.8em;
+    color: #34495e;
+    letter-spacing: 1px;
+    transform: rotate(-1.5deg); /* Slight handwritten tilt */
   }
   #name .name-text {
     white-space: nowrap;
@@ -144,14 +177,18 @@ export const style = css`
     white-space: nowrap;
   }
   .header #species {
-    color: #8c96a5;
+    color: #7f8c8d;
+    font-style: italic;
+    font-family: serif;
+    opacity: 0.8;
   }
   #area {
-    color: var(--secondary-text-color);
+    color: #95a5a6;
     font-size: 0.9em;
     font-weight: 500;
     opacity: 0.9;
     margin-top: 2px;
+    font-family: "Indie Flower", cursive;
   }
   .header-compact #species {
     line-height: 85%;
@@ -255,15 +292,18 @@ export const style = css`
     display: flex;
     align-items: center;
     gap: 4px;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
     position: relative;
-    border: 1px dashed rgba(255,255,255,0.4);
+    border: 1px dashed rgba(255, 255, 255, 0.4);
   }
   .care-badge::after {
     content: "";
     position: absolute;
-    top: -2px; left: -2px; right: -2px; bottom: -2px;
-    border: 1px solid rgba(0,0,0,0.1);
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     pointer-events: none;
   }
   .care-badge.misting {
@@ -291,14 +331,26 @@ export const style = css`
   }
   .health-bar-bg {
     flex: 1;
-    height: 6px;
-    background-color: var(--primary-background-color);
-    border-radius: 3px;
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 10px 5px 12px 3px / 3px 12px 5px 10px; /* Rough edges */
     overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
   }
   .health-bar-fill {
     height: 100%;
     transition: width 0.5s ease-out;
+    background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.15) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 10px 10px; /* Hatching pattern */
   }
   .health-value {
     font-size: 0.8em;
@@ -358,28 +410,41 @@ export const style = css`
 
   /* Meter / Attributes */
   .meter-container {
-    height: 8px;
-    background-color: var(--secondary-background-color);
-    border-radius: 4px;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 8px 4px 10px 2px / 2px 10px 4px 8px;
     flex-grow: 1;
     margin-right: 10px;
     overflow: hidden;
     position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.05);
   }
   .meter-bar {
     height: 100%;
-    border-radius: 4px;
+    border-radius: inherit;
     transition: width 0.5s ease-in-out;
+    background-image: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.1) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 10px 10px;
   }
   .attribute.tooltip.width-100 .meter-container {
     margin-right: 15px;
   }
   .divider {
-    height: 1px;
-    background-color: #727272;
-    opacity: 0.25;
-    margin-left: 8px;
-    margin-right: 8px;
+    height: 2px;
+    background-color: #d0c0a0;
+    opacity: 0.6;
+    margin: 8px 16px;
+    border-radius: 50% 2px 50% 1px;
+    transform: rotate(0.1deg);
   }
   .tooltip {
     position: relative;

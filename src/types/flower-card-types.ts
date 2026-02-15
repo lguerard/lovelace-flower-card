@@ -44,8 +44,8 @@ export interface PlantInfo {
   result: {
     watering?: WateringInfo;
     health?: HealthInfo;
-    sensors?: Record<string, any>;
-    [key: string]: any;
+    sensors?: Record<string, unknown>;
+    [key: string]: unknown;
   };
 }
 

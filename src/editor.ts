@@ -31,7 +31,7 @@ export class FlowerCardEditor extends LitElement {
       return;
     }
 
-    let value: any;
+    let value: unknown;
 
     // Handle show_bars checkboxes specially (ha-checkbox doesn't have type='checkbox')
     if (configValue === "show_bars") {
