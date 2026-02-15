@@ -174,14 +174,18 @@ export const style = css`
     white-space: nowrap;
   }
   .header #species {
-    color: #8c96a5;
+    color: #7f8c8d;
+    font-style: italic;
+    font-family: serif;
+    opacity: 0.8;
   }
   #area {
-    color: var(--secondary-text-color);
+    color: #95a5a6;
     font-size: 0.9em;
     font-weight: 500;
     opacity: 0.9;
     margin-top: 2px;
+    font-family: "Indie Flower", cursive;
   }
   .header-compact #species {
     line-height: 85%;
