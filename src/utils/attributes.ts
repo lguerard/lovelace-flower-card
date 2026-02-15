@@ -381,6 +381,7 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
   const monitored = card.config.show_bars || default_show_bars;
 
   if (card.plantinfo && card.plantinfo.result) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = card.plantinfo.result as any;
     for (const elem of monitored) {
       const attr = result[elem];
@@ -417,7 +418,8 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
         attr.current !== "unknown";
 
       const isExplicit =
-        card.config.show_bars && card.config.show_bars.includes(elem);
+        (card.config.show_bars && card.config.show_bars.includes(elem)) ||
+        (!card.config.show_bars && default_show_bars.includes(elem));
 
       // If no sensor, no value and not explicitly requested, skip it
       if (!hasValidSensor && !hasValue && !isExplicit) {
@@ -565,16 +567,14 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
             </div>
           `
         : ""}
-      ${showUnits || isTempOrHum
-        ? html`<div
-            class="attribute-header"
-            style="${isTempOrHum && hasLimits ? `color: ${color}` : ""}"
-          >
-            <span class="value">${display_val}</span>${showUnits
-              ? html` <span class="unit">${unsafeHTML(label)}</span>`
-              : ""}
-          </div>`
-        : ""}
+      <div
+        class="attribute-header"
+        style="${isTempOrHum && hasLimits ? `color: ${color}` : ""}"
+      >
+        <span class="value">${display_val}</span>${showUnits
+          ? html` <span class="unit">${unsafeHTML(label)}</span>`
+          : ""}
+      </div>
     </div>
   `;
 };
