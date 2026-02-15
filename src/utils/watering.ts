@@ -20,7 +20,8 @@ export function calculate_next_watering(
   config: FlowerCardConfig,
   plantInfo: PlantInfo,
 ): string {
-  const moistureAttribute = plantInfo.result["moisture"];
+  const result = plantInfo.result as any;
+  const moistureAttribute = result["moisture"];
   if (!moistureAttribute) {
     return "Unknown";
   }
@@ -33,11 +34,11 @@ export function calculate_next_watering(
 
   // Default daily water drop (in moisture units)
   // Use baseline watering frequency if available, otherwise assume 7 days
-  const baselineDays = plantInfo.result.watering || 7;
+  const baselineDays = result.watering || 7;
 
   if (isNaN(currentMoisture)) {
     // If we can't get current moisture, we might want to check last_watered
-    const lastWatered = plantInfo.result.last_watered;
+    const lastWatered = result.last_watered;
     if (lastWatered) {
       const lastWateredDate = new Date(lastWatered);
       const nextWateringDate = new Date(
@@ -59,18 +60,16 @@ export function calculate_next_watering(
   const isOutside =
     config.is_outside !== undefined
       ? config.is_outside
-      : plantInfo.result.outside || false;
+      : result.outside || false;
 
-  const tempSensorId =
-    config.temperature_sensor || plantInfo.result.room_temperature;
-  const humiditySensorId =
-    config.humidity_sensor || plantInfo.result.room_humidity;
+  const tempSensorId = config.temperature_sensor || result.room_temperature;
+  const humiditySensorId = config.humidity_sensor || result.room_humidity;
 
   // Adjustment factor based on environment
   let adjustmentFactor = 1.0;
 
-  if (tempSensorId && hass.states[tempSensorId]) {
-    const temperature = parseFloat(hass.states[tempSensorId].state);
+  if (tempSensorId && hass.states[tempSensorId as string]) {
+    const temperature = parseFloat(hass.states[tempSensorId as string].state);
     if (!isNaN(temperature)) {
       // Increase water consumption by 5% for every degree above 22°C
       // Decrease by 5% for every degree below 22°C
@@ -78,21 +77,21 @@ export function calculate_next_watering(
     }
   }
 
-  if (humiditySensorId && hass.states[humiditySensorId]) {
-    const humidity = parseFloat(hass.states[humiditySensorId].state);
+  if (humiditySensorId && hass.states[humiditySensorId as string]) {
+    const humidity = parseFloat(hass.states[humiditySensorId as string].state);
     if (!isNaN(humidity)) {
       // Decrease water consumption by 2% for every 5% of humidity above 50%
       adjustmentFactor *= 1 - (humidity - 50) * 0.004;
     }
   }
 
-  const weatherEntityId =
-    config.weather_entity || plantInfo.result.weather_entity;
-  if (isOutside && weatherEntityId && hass.states[weatherEntityId]) {
-    const weather = hass.states[weatherEntityId];
+  const weatherEntityId = config.weather_entity || result.weather_entity;
+  if (isOutside && weatherEntityId && hass.states[weatherEntityId as string]) {
+    const weather = hass.states[weatherEntityId as string];
     // If it's outdoor, weather has more impact
     // check if raining in forecast
-    const forecast = weather.attributes.forecast || [];
+    const attributes = weather.attributes as any;
+    const forecast = attributes.forecast || [];
     const isRainingSoon = forecast
       .slice(0, 2)
       .some(
