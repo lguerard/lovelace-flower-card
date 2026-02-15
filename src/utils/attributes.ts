@@ -18,15 +18,21 @@ export const renderWateringStatus = (card: FlowerCard) => {
   const health = card.plantinfo?.result?.health as HealthInfo;
   if (!watering) return html``;
 
-  const nextDate = new Date(watering.next_watering);
-  const factor = watering.water_factor || 1.0;
+  let days: number;
+  if (watering.days_until !== undefined && watering.days_until !== null) {
+    days = Math.round(watering.days_until);
+  } else {
+    const nextDate = new Date(watering.next_watering);
+    days = Math.round(
+      (nextDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    );
+  }
 
-  // Simple relative date formatting
-  const days = Math.round(
-    (nextDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-  );
+  const factor = watering.water_factor || 1.0;
   let nextText = "";
-  if (days === 0) nextText = "Today";
+  if (isNaN(days)) {
+    nextText = watering.next_watering; // Fallback to raw string if calc fails
+  } else if (days === 0) nextText = "Today";
   else if (days === 1) nextText = "Tomorrow";
   else if (days === -1) nextText = "Yesterday";
   else if (days > 0) nextText = `In ${days} days`;
