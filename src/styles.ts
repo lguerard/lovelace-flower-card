@@ -403,6 +403,10 @@ export const style = css`
     background-color: #3498db;
     color: white;
   }
+  .care-badge.smart {
+    background-color: #27ae60;
+    color: white;
+  }
   .care-badge.tendency {
     background-color: var(--secondary-background-color);
     border: 1px solid currentColor;
