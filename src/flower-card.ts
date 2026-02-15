@@ -1,5 +1,5 @@
 import { CSSResult, HTMLTemplateResult, LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { HomeAssistant } from "custom-card-helpers";
 import { style } from "./styles";
 import {
@@ -21,6 +21,7 @@ import {
   missingImage,
   plantAttributes,
 } from "./utils/constants";
+import { calculate_next_watering } from "./utils/watering";
 import { isMediaSourceUrl, moreInfo, resolveMediaSource } from "./utils/utils";
 
 console.info(
@@ -44,6 +45,8 @@ console.info(
 export default class FlowerCard extends LitElement {
   @property() _hass?: any;
   @property() config?: FlowerCardConfig;
+
+  @state() private _showInfo = false;
 
   private stateObj: HomeAssistantEntity | undefined;
   private previousFetchDate: number;
@@ -70,9 +73,13 @@ export default class FlowerCard extends LitElement {
     // Only fetch once every second at max. HA is flooded with websocket requests
     if (Date.now() > this.previousFetchDate + 1000) {
       this.previousFetchDate = Date.now();
-      this.get_data(hass).then(() => {
-        this.requestUpdate();
-      });
+      this.get_data(hass)
+        .then(() => {
+          this.requestUpdate();
+        })
+        .catch(() => {
+          /* Fallback handled in get_data */
+        });
     }
   }
 
@@ -108,6 +115,20 @@ export default class FlowerCard extends LitElement {
         {
           name: "battery_sensor",
           selector: { entity: { domain: "sensor", device_class: "battery" } },
+        },
+        {
+          name: "temperature_sensor",
+          selector: {
+            entity: { domain: "sensor", device_class: "temperature" },
+          },
+        },
+        {
+          name: "humidity_sensor",
+          selector: { entity: { domain: "sensor", device_class: "humidity" } },
+        },
+        {
+          name: "weather_entity",
+          selector: { entity: { domain: "weather" } },
         },
         {
           type: "expandable",
@@ -153,6 +174,10 @@ export default class FlowerCard extends LitElement {
               name: "hide_units",
               selector: { boolean: {} },
             },
+            {
+              name: "is_outside",
+              selector: { boolean: {} },
+            },
           ],
         },
       ],
@@ -162,10 +187,14 @@ export default class FlowerCard extends LitElement {
           name: "Display Name",
           display_type: "Display Type",
           battery_sensor: "Battery Sensor",
+          temperature_sensor: "Room Temperature (Override)",
+          humidity_sensor: "Room Humidity (Override)",
+          weather_entity: "Weather Entity (Override)",
           show_bars: "Show Bars",
           hide_species: "Hide Species",
           hide_image: "Hide Image",
           hide_units: "Hide Units",
+          is_outside: "Is Outside?",
         };
         return labels[schema.name] || schema.name;
       },
@@ -208,6 +237,144 @@ export default class FlowerCard extends LitElement {
     this.config = config;
   }
 
+  private _markWatered(ev: Event): void {
+    ev.stopPropagation();
+    this._hass.callService("plant", "watered", {
+      entity_id: this.config?.entity,
+    });
+  }
+
+  private _toggleSort(ev: Event): void {
+    ev.stopPropagation();
+    if (this.config?.sort_entity) {
+      this._hass.callService("input_select", "select_next", {
+        entity_id: this.config.sort_entity,
+      });
+    }
+  }
+
+  private _toggleInfo(ev: Event): void {
+    ev.stopPropagation();
+    this._showInfo = !this._showInfo;
+  }
+
+  private async _removePlant(ev: Event): Promise<void> {
+    ev.stopPropagation();
+    const displayName = this.config?.name || this.stateObj?.attributes?.friendly_name;
+    
+    const confirmed = window.confirm(
+      `Êtes-vous sûr de vouloir supprimer définitivement la plante "${displayName}" ?\n\nCette action supprimera l'intégration et toutes les données associées.`,
+    );
+
+    if (confirmed) {
+      await this._hass.callService("plant", "remove_plant", {
+        entity_id: this.config?.entity,
+      });
+    }
+  }
+
+  private _renderPlantInfoPanel(): HTMLTemplateResult {
+    if (!this._showInfo) return html``;
+
+    const result = this.plantinfo?.result || {};
+    const attr = this.stateObj.attributes;
+    const items = [
+      {
+        label: "Plant-ID (PID)",
+        value: result.pid || result.display_pid || attr.pid || attr.plant_id,
+      },
+      {
+        label: "Scientific name",
+        value:
+          result.scientific_name ||
+          result.species ||
+          attr.species ||
+          attr.scientific_name,
+      },
+      {
+        label: "Category",
+        value:
+          result.category ||
+          attr.category ||
+          attr.plant_category ||
+          result.plant_type ||
+          attr.plant_type ||
+          result.type ||
+          attr.type,
+      },
+      {
+        label: "Origin",
+        value: (() => {
+          const originVal =
+            result.origin ||
+            result.origins ||
+            attr.origin ||
+            attr.origins ||
+            attr.plant_origin ||
+            result.native_location ||
+            attr.native_location ||
+            result.native_distribution ||
+            attr.native_distribution ||
+            result.native_range ||
+            attr.native_range ||
+            result.distribution ||
+            attr.distribution ||
+            result.native_region ||
+            attr.native_region;
+          return Array.isArray(originVal) ? originVal.join(", ") : originVal;
+        })(),
+      },
+      {
+        label: "Common names",
+        value: (() => {
+          const names = result.common_names || attr.common_name;
+          if (Array.isArray(names)) {
+            return names
+              .map((n) => (typeof n === "object" ? n.name : n))
+              .join(", ");
+          }
+          return (
+            names || result.alias || result.friendly_name || attr.friendly_name
+          );
+        })(),
+      },
+    ].filter(
+      (item) =>
+        item.value !== undefined && item.value !== null && item.value !== "",
+    );
+
+    return html`
+      <div class="plant-info-panel">
+        <div class="panel-header">
+          <span>Plant Details</span>
+          <div class="panel-actions">
+            <ha-icon
+              class="delete-button"
+              icon="mdi:delete-outline"
+              @click="${this._removePlant}"
+              title="Supprimer la plante"
+            ></ha-icon>
+            <ha-icon icon="mdi:close" @click="${this._toggleInfo}"></ha-icon>
+          </div>
+        </div>
+        ${items.length > 0
+          ? html`
+              <div class="panel-content">
+                ${items.map(
+                  (item) => html`
+                    <div class="info-item">
+                      <span class="info-label">${item.label}</span>
+                      <span class="info-value">${item.value}</span>
+                    </div>
+                  `,
+                )}
+              </div>
+            `
+          : ""}
+      </div>
+    `;
+  }
+
   render(): HTMLTemplateResult {
     if (!this.config || !this._hass) return html``;
 
@@ -218,6 +385,26 @@ export default class FlowerCard extends LitElement {
     }
 
     const species = this.stateObj.attributes.species;
+    const entityId = this.config.entity!;
+
+    // Robust area lookup
+    let areaName: string | null = null;
+    if (this._hass) {
+      const entityRegistry = this._hass.entities
+        ? this._hass.entities[entityId]
+        : null;
+      if (entityRegistry) {
+        let areaId = entityRegistry.area_id;
+        if (!areaId && entityRegistry.device_id && this._hass.devices) {
+          areaId = this._hass.devices[entityRegistry.device_id]?.area_id;
+        }
+        if (areaId && this._hass.areas) {
+          areaName = this._hass.areas[areaId]?.name || null;
+        }
+      }
+    }
+    const area = areaName || this.stateObj.attributes.area || null;
+
     const displayName =
       this.config.name || this.stateObj.attributes.friendly_name;
     const hideSpecies = this.config.hide_species ?? false;
@@ -232,6 +419,23 @@ export default class FlowerCard extends LitElement {
         : "card-margin-top";
     const noImageClass = hideImage ? " no-image" : "";
 
+    const nextWateringValue =
+      this.stateObj.attributes.next_watering ||
+      this.plantinfo?.result?.next_watering ||
+      (this.plantinfo
+        ? calculate_next_watering(this._hass, this.config, this.plantinfo)
+        : "Calculating...");
+
+    const days = parseInt(String(nextWateringValue));
+    let wateringClass = "watering-safe";
+    if (isNaN(days) || days <= 0) {
+      wateringClass = "watering-urgent";
+    } else if (days === 1) {
+      wateringClass = "watering-warning";
+    }
+
+    const wateringExplanation = this.stateObj.attributes.watering_explanation;
+
     return html`
       <ha-card class="${haCardCssClass}">
         <div
@@ -239,29 +443,75 @@ export default class FlowerCard extends LitElement {
           @click="${() => moreInfo(this, this.stateObj.entity_id)}"
         >
           ${!hideImage
-            ? html`<img src="${this._resolvedImageUrl || missingImage}" />`
+            ? html`
+                <div class="plant-image-container">
+                  <img src="${this._resolvedImageUrl || missingImage}" />
+                </div>
+              `
             : ""}
-          <span id="name">
-            ${displayName}
-            <ha-icon
-              .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
-                ? "alert-circle-outline"
-                : ""}"
-            ></ha-icon>
-          </span>
+          <div class="header-text">
+            <div class="name-area-container">
+              <span id="name">
+                <span class="name-text">${displayName}</span>
+                <ha-icon
+                  class="info-button"
+                  icon="mdi:information-outline"
+                  @click="${this._toggleInfo}"
+                  title="Plant Information"
+                ></ha-icon>
+                <ha-icon
+                  class="delete-button-main"
+                  icon="mdi:delete-outline"
+                  @click="${this._removePlant}"
+                  title="Supprimer la plante"
+                ></ha-icon>
+                <ha-icon
+                  .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
+                    ? "alert-circle-outline"
+                    : ""}"
+                ></ha-icon>
+              </span>
+              <span id="area">${area || html`&nbsp;`}</span>
+              ${!hideSpecies
+                ? html`<span id="species">${species || html`&nbsp;`}</span>`
+                : ""}
+            </div>
+            <div id="next-watering" class="${wateringClass} tooltip">
+              <span>${nextWateringValue}</span>
+              ${wateringExplanation
+                ? html`<span class="tip">${wateringExplanation}</span>`
+                : ""}
+              <ha-icon
+                class="water-button"
+                icon="mdi:water-pump"
+                @click="${(e: Event) => this._markWatered(e)}"
+                title="Mark as watered"
+              ></ha-icon>
+              ${this.config?.sort_entity
+                ? html`
+                    <ha-icon
+                      class="sort-button"
+                      icon="mdi:sort"
+                      @click="${(e: Event) => this._toggleSort(e)}"
+                      title="Changer l'ordre de tri"
+                    ></ha-icon>
+                  `
+                : ""}
+            </div>
+          </div>
           <span id="battery"
             >${renderExtraBadges(this)}${renderBattery(this)}</span
           >
-          ${!hideSpecies ? html`<span id="species">${species}</span>` : ""}
         </div>
         ${renderWateringStatus(this)}
         <div class="divider"></div>
-        ${renderAttributes(this)}
+        ${renderAttributes(this)} ${this._renderPlantInfoPanel()}
       </ha-card>
     `;
   }
 
   async get_data(hass: HomeAssistant): Promise<void> {
+    if (!hass || !hass.connected) return;
     try {
       this.plantinfo = await hass.callWS({
         type: "plant/get_info",

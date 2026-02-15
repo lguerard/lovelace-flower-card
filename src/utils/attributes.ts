@@ -332,6 +332,21 @@ export const renderExtraBadges = (card: FlowerCard) => {
   return card.config.extra_badges.map((badge) => renderExtraBadge(card, badge));
 };
 
+<<<<<<< HEAD
+=======
+/** Render the plant attributes as a list of bars or values.
+ *
+ * Parameters:
+ * card (FlowerCard):
+ *     The flower card instance containing configuration and state.
+ * available_attributes (string[]):
+ *     List of attributes provided by the plant entity.
+ *
+ * Returns:
+ * TemplateResult[]:
+ *     An array of Lit templates for the monitored attributes.
+ */
+>>>>>>> origin/main
 export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
   const displayed: DisplayedAttributes = {};
   const monitored = card.config.show_bars || default_show_bars;
@@ -339,6 +354,7 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
   if (card.plantinfo && card.plantinfo.result) {
     const result = card.plantinfo.result;
     for (const elem of monitored) {
+<<<<<<< HEAD
       if (result[elem]) {
         const { max, min, current, icon, sensor } = result[elem];
         const entityState = card._hass.states[sensor];
@@ -351,12 +367,97 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
           result[elem].unit_of_measurement ||
           "";
         const limits: Limits = { max: Number(max), min: Number(min) };
+=======
+      const attr = result[elem];
+      let sensorId = attr?.sensor;
+
+      // Fallback for temperature and humidity if plant entity doesn't have it
+      if (
+        (!sensorId || card._hass.states[sensorId]?.state === "unknown") &&
+        elem === "temperature"
+      ) {
+        sensorId = card.config.temperature_sensor || result.room_temperature;
+      }
+      if (
+        (!sensorId || card._hass.states[sensorId]?.state === "unknown") &&
+        elem === "humidity"
+      ) {
+        sensorId = card.config.humidity_sensor || result.room_humidity;
+      }
+
+      const entityState = sensorId ? card._hass.states[sensorId] : undefined;
+
+      // Decide if we should show this attribute
+      const hasValidSensor =
+        entityState &&
+        entityState.state !== "unknown" &&
+        entityState.state !== "unavailable" &&
+        entityState.state !== "none";
+
+      const hasValue =
+        attr &&
+        attr.current !== undefined &&
+        attr.current !== null &&
+        attr.current !== "unavailable" &&
+        attr.current !== "unknown";
+
+      const isExplicit =
+        card.config.show_bars && card.config.show_bars.includes(elem);
+
+      // If no sensor, no value and not explicitly requested, skip it
+      if (!hasValidSensor && !hasValue && !isExplicit) {
+        continue;
+      }
+
+      // Hide DLI if there's no light sensor (unless explicitly requested)
+      if (elem === "dli" && !isExplicit) {
+        const illuSensor =
+          result["illuminance"]?.sensor || result["brightness"]?.sensor;
+        if (
+          !illuSensor ||
+          card._hass.states[illuSensor]?.state === "unknown" ||
+          card._hass.states[illuSensor]?.state === "unavailable"
+        ) {
+          continue;
+        }
+      }
+
+      if (attr || sensorId) {
+        const current = hasValidSensor
+          ? Number(entityState.state)
+          : attr?.current || 0;
+        const display_state = hasValidSensor
+          ? card._hass.formatEntityState(entityState).replace(/[^\d,.+-]/g, "")
+          : String(current);
+        const unit_of_measurement =
+          entityState?.attributes?.unit_of_measurement ||
+          attr?.unit_of_measurement ||
+          "";
+
+        const min = attr?.min !== undefined ? attr.min : null;
+        const max = attr?.max !== undefined ? attr.max : null;
+        const limits: Limits = {
+          max: max !== null ? Number(max) : null,
+          min: min !== null ? Number(min) : null,
+        };
+
+>>>>>>> origin/main
         displayed[elem] = {
           name: elem,
           current: Number(current),
           limits,
+<<<<<<< HEAD
           icon: String(icon),
           sensor: String(sensor),
+=======
+          icon: String(
+            attr?.icon ||
+              (elem === "temperature"
+                ? "mdi:thermometer"
+                : "mdi:water-percent"),
+          ),
+          sensor: String(sensorId || ""),
+>>>>>>> origin/main
           unit_of_measurement: String(unit_of_measurement),
           display_state,
         };
@@ -367,6 +468,21 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
   return renderAttributeChunks(card, displayed);
 };
 
+<<<<<<< HEAD
+=======
+/** Render a single plant attribute, optionally as a bar or just a value.
+ *
+ * Parameters:
+ * card (FlowerCard):
+ *     The flower card instance.
+ * attr (DisplayedAttribute):
+ *     The attribute data to render.
+ *
+ * Returns:
+ * TemplateResult:
+ *     A Lit template for the attribute, with bars for moisture/light and values for temp/humidity.
+ */
+>>>>>>> origin/main
 export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
   const { max, min } = attr.limits;
   const unitTooltip = attr.unit_of_measurement;
@@ -374,11 +490,34 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
   const icon = attr.icon || "mdi:help-circle-outline";
   const val = attr.current ?? 0;
   const aval = !isNaN(val) && val !== null && val !== undefined;
+<<<<<<< HEAD
   const display_val = attr.display_state;
   // For log scale, use linear if value or min is 0 (log(0) is undefined)
   const useLinear = !logScale || val <= 0 || min <= 0;
   const pct = useLinear
     ? 100 * Math.max(0, Math.min(1, (val - min) / (max - min)))
+=======
+  const hasLimits =
+    max !== null &&
+    min !== null &&
+    !isNaN(max) &&
+    !isNaN(min) &&
+    max !== undefined &&
+    min !== undefined;
+  const display_val = attr.display_state;
+
+  const isProblem = aval && hasLimits && (val < min || val > max);
+  const color = isProblem
+    ? "var(--label-badge-red)"
+    : "var(--label-badge-green)";
+
+  // For log scale, use linear if value or min is 0 (log(0) is undefined)
+  const useLinear = !logScale || val <= 0 || min <= 0 || !hasLimits;
+  const pct = useLinear
+    ? hasLimits
+      ? 100 * Math.max(0, Math.min(1, (val - min) / (max - min)))
+      : 0
+>>>>>>> origin/main
     : 100 *
       Math.max(
         0,
@@ -387,14 +526,23 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
           (Math.log(val) - Math.log(min)) / (Math.log(max) - Math.log(min)),
         ),
       );
+<<<<<<< HEAD
   const toolTipText = aval
     ? `${attr.name}: ${val} ${unitTooltip}<br>(${min} ~ ${max} ${unitTooltip})`
     : card._hass.localize("state.default.unavailable");
+=======
+
+  // Simple label/tooltip info
+>>>>>>> origin/main
   const label =
     attr.name === "dli" || attr.name === "dli_24h"
       ? '<math style="display: inline-grid;" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mrow><mn>mol</mn></mrow><mrow><mn>d</mn><mn>⋅</mn><msup><mn>m</mn><mn>2</mn></msup></mrow></mfrac></mrow></math>'
       : unitTooltip;
+<<<<<<< HEAD
   // Determine settings with explicit overrides taking precedence over display_type defaults
+=======
+
+>>>>>>> origin/main
   const isCompact = card.config.display_type === DisplayType.Compact;
   const barsPerRow = card.config.bars_per_row ?? (isCompact ? 1 : 2);
   const showUnits = !(card.config.hide_units ?? isCompact);
@@ -402,12 +550,18 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
 
   const attributeCssClass = `attribute tooltip ${useFullWidth ? "width-100" : ""}`;
 
+<<<<<<< HEAD
+=======
+  const isTempOrHum = attr.name === "temperature" || attr.name === "humidity";
+
+>>>>>>> origin/main
   return html`
     <div
       class="${attributeCssClass}"
       @click="${() => moreInfo(card, attr.sensor)}"
     >
       <div class="tip" style="text-align:center;">
+<<<<<<< HEAD
         ${unsafeHTML(toolTipText)}
       </div>
       <ha-icon .icon="${icon}"></ha-icon>
@@ -438,6 +592,35 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
             <span class="value">${display_val}</span>&nbsp;<span class="unit"
               >${unsafeHTML(label)}</span
             >
+=======
+        ${attr.name}: ${display_val} ${unitTooltip}
+        ${hasLimits ? html`<br />(${min} - ${max})` : ""}
+      </div>
+      <ha-icon
+        .icon="${icon}"
+        style="color: ${isTempOrHum && hasLimits ? color : "inherit"}"
+      ></ha-icon>
+      ${!isTempOrHum && hasLimits
+        ? html`
+            <div class="meter-container">
+              <div
+                class="meter-bar"
+                style="width: ${aval
+                  ? pct
+                  : 0}%; background-color: var(--label-badge-green);"
+              ></div>
+            </div>
+          `
+        : ""}
+      ${showUnits || isTempOrHum
+        ? html`<div
+            class="attribute-header"
+            style="${isTempOrHum && hasLimits ? `color: ${color}` : ""}"
+          >
+            <span class="value">${display_val}</span>${showUnits
+              ? html` <span class="unit">${unsafeHTML(label)}</span>`
+              : ""}
+>>>>>>> origin/main
           </div>`
         : ""}
     </div>

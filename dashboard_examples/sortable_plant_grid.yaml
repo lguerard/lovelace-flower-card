@@ -1,0 +1,76 @@
+# Dashboard complet : Page dédiée aux plantes avec tri dynamique
+# Copiez ce code dans l'Éditeur de configuration brute de votre tableau de bord.
+
+title: Mes Plantes
+views:
+- title: Plantes
+  path: plantes
+  icon: mdi:flower
+  cards:
+  - type: vertical-stack
+    cards:
+    # 1. Barre de contrôle Mushroom pour le tri
+    - type: custom:mushroom-chips-card
+      alignment: center
+      chips:
+      - type: template
+        content: "Tri : {{ states('input_select.plant_sort_order') | capitalize | default('Nom') }}"
+        icon: mdi:sort
+        tap_action:
+          action: call-service
+          service: input_select.select_next
+          target:
+            entity_id: input_select.plant_sort_order
+
+      - type: template
+        content: "Ajouter"
+        icon: mdi:plus-circle
+        icon_color: green
+        tap_action:
+          action: navigate
+          navigation_path: "/config/integrations/dashboard"
+        hold_action:
+          action: navigate
+          navigation_path: "/config/integrations/dashboard/add?domain=plant"
+
+    # 2. Grille de plantes auto-alimentée
+    - type: custom:auto-entities
+      show_empty: false
+      card:
+        type: grid
+        columns: 1
+        square: false
+      card_param: cards
+      filter:
+        template: >
+          {%- set ns = namespace(plants=[]) -%} {%- set sort_order = states('input_select.plant_sort_order') | lower -%} {%- set entities = states.plant | map(attribute='entity_id') | list -%}
+
+          {%- for entity in entities -%}
+            {%- set s = states[entity] -%}
+            {%- if s -%}
+              {%- set days = s.attributes.next_watering_days | default(s.attributes.next_watering | default('0') | string | replace(' j', '') | int) -%}
+              {%- set ns.plants = ns.plants + [{
+                'entity': entity,
+                'name': s.attributes.friendly_name | default(entity),
+                'area': s.attributes.area | default(''),
+                'watering': days | int
+              }] -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- if 'arrosage' in sort_order -%}
+            {%- set sorted = ns.plants | sort(attribute='watering') -%}
+          {%- elif 'pièce' in sort_order or 'piece' in sort_order -%}
+            {%- set sorted = ns.plants | sort(attribute='area') -%}
+          {%- else -%}
+            {%- set sorted = ns.plants | sort(attribute='name') -%}
+          {%- endif -%}
+
+          {%- set ns_cards = namespace(cards=[]) -%} {%- for p in sorted -%}
+            {%- set ns_cards.cards = ns_cards.cards + [{
+              'type': 'custom:flower-card',
+              'entity': p.entity,
+              'sort_entity': 'input_select.plant_sort_order'
+            }] -%}
+          {%- endfor -%} {{ ns_cards.cards | tojson }}
+      # On n'a plus besoin du bloc sort: classique car le template gère tout

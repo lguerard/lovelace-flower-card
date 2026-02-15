@@ -15,13 +15,19 @@ export interface ExtraBadge {
 export interface FlowerCardConfig extends LovelaceCardConfig {
   entity?: string;
   battery_sensor?: string;
+  temperature_sensor?: string; // External room temperature sensor for fallback and watering prediction
+  humidity_sensor?: string; // External room humidity sensor for fallback and watering prediction
+  weather_entity?: string; // Weather provider entity for forecasting outdoor watering needs
   display_type?: DisplayType;
   hide_units?: boolean; // Hide value/unit next to bars (default: false for full, true for compact)
   bars_per_row?: number; // Number of bars per row: 1 or 2 (default: 2 for full, 1 for compact)
   name?: string;
   hide_species?: boolean;
   hide_image?: boolean;
+  is_outside?: boolean; // Manual override for outside/indoor
   extra_badges?: ExtraBadge[];
+  sort_entity?: string; // Optional input_select entity to control sorting
+  notification_service?: string; // Service to use for notifications (e.g., notify.mobile_app_iphone)
 }
 
 export enum DisplayType {
@@ -67,8 +73,8 @@ export interface PlantAttribute {
 }
 
 export interface Limits {
-  max: number;
-  min: number;
+  max: number | null;
+  min: number | null;
 }
 
 export interface Attribute {
