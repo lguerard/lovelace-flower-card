@@ -420,6 +420,25 @@ export default class FlowerCard extends LitElement {
         : "card-margin-top";
     const noImageClass = hideImage ? " no-image" : "";
 
+    // Dynamic Shadow Logic (3D Shadow based on time of day)
+    const now = new Date();
+    const hour = now.getHours() + now.getMinutes() / 60;
+    // Map hour (0-24) to shadow angle (-60 to 60 degrees)
+    // 12:00 = 0deg (straight down), 6:00 = -60deg, 18:00 = 60deg
+    const angleAdjustment = (hour - 12) * 10; 
+    const isNight = hour < 6 || hour > 20;
+    
+    // Get current light level for shadow opacity
+    const illuminance = this.plantinfo?.result?.illuminance?.current || 
+                        this.plantinfo?.result?.brightness?.current || 
+                        500; // Default to medium light
+    const opacity = isNight ? 0.05 : Math.min(0.4, (illuminance / 2000) + 0.1);
+    
+    const shadowStyle = `
+      filter: drop-shadow(${angleAdjustment}px 10px 8px rgba(0,0,0,${opacity}));
+      transform: perspective(1000px) rotateX(5deg) rotateY(${angleAdjustment/5}deg);
+    `;
+
     const nextWateringValue =
       this.stateObj.attributes.next_watering ||
       this.plantinfo?.result?.next_watering ||
@@ -445,7 +464,7 @@ export default class FlowerCard extends LitElement {
         >
           ${!hideImage
             ? html`
-                <div class="plant-image-container">
+                <div class="plant-image-container" style="${shadowStyle}">
                   <img src="${this._resolvedImageUrl || missingImage}" />
                 </div>
               `

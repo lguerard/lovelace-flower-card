@@ -4,9 +4,12 @@ export const style = css`
   ha-card {
     overflow: visible !important;
     isolation: isolate;
+    border-radius: 24px 8px 32px 12px / 12px 32px 10px 24px;
+    background: var(--card-background-color);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
   }
   .card-margin-top {
-    margin-top: 16px;
+    margin-top: 24px;
   }
   .attributes {
     display: flex;
@@ -114,6 +117,8 @@ export const style = css`
     display: flex;
     align-items: center;
     width: 100%;
+    font-family: "Georgia", serif;
+    font-size: 1.3em;
   }
   #name .name-text {
     white-space: nowrap;
@@ -245,11 +250,21 @@ export const style = css`
   .care-badge {
     font-size: 0.75em;
     font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 3px 8px;
+    border-radius: 2px;
     display: flex;
     align-items: center;
     gap: 4px;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    position: relative;
+    border: 1px dashed rgba(255,255,255,0.4);
+  }
+  .care-badge::after {
+    content: "";
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    border: 1px solid rgba(0,0,0,0.1);
+    pointer-events: none;
   }
   .care-badge.misting {
     background-color: #03a9f4;
