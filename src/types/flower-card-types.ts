@@ -56,11 +56,18 @@ export interface WateringInfo {
   needs_watering: boolean;
   explanation?: string;
   water_factor?: number;
+  forecast_impact?: string;
+  tendency?: {
+    label: string;
+    icon: string;
+    color: string;
+  };
 }
 
 export interface HealthInfo {
   comfort_score: number;
   misting_required: boolean;
+  reasons?: string[];
 }
 
 export interface PlantAttribute {

@@ -42,8 +42,25 @@ export const renderWateringStatus = (card: FlowerCard) => {
         <span class="watering-next">
           <ha-icon .icon="mdi:watering-can"></ha-icon>
           Next watering: ${nextText}
+          ${watering.forecast_impact
+            ? html`<span class="forecast-hint" title="Forecasted weather impact"
+                >(${watering.forecast_impact})</span
+              >`
+            : ""}
         </span>
         <div class="care-badges">
+          ${watering.tendency
+            ? html`
+                <span
+                  class="care-badge tendency"
+                  style="color: ${watering.tendency.color}"
+                  title="Water demand tendency: ${watering.tendency.label}"
+                >
+                  <ha-icon .icon="${watering.tendency.icon}"></ha-icon>
+                  ${watering.tendency.label}
+                </span>
+              `
+            : ""}
           ${health?.misting_required
             ? html`
                 <span
@@ -65,7 +82,10 @@ export const renderWateringStatus = (card: FlowerCard) => {
       <div class="health-row">
         ${health
           ? html`
-              <div class="health-score-container">
+              <div
+                class="health-score-container tooltip"
+                title="${health.reasons?.join("\n") || ""}"
+              >
                 <div class="health-label">Comfort Score</div>
                 <div class="health-bar-bg">
                   <div
@@ -79,6 +99,9 @@ export const renderWateringStatus = (card: FlowerCard) => {
                   ></div>
                 </div>
                 <div class="health-value">${health.comfort_score}%</div>
+                ${health.reasons
+                  ? html`<div class="tip">${health.reasons.join("<br>")}</div>`
+                  : ""}
               </div>
             `
           : ""}
@@ -332,8 +355,6 @@ export const renderExtraBadges = (card: FlowerCard) => {
   return card.config.extra_badges.map((badge) => renderExtraBadge(card, badge));
 };
 
-<<<<<<< HEAD
-=======
 /** Render the plant attributes as a list of bars or values.
  *
  * Parameters:
@@ -346,7 +367,6 @@ export const renderExtraBadges = (card: FlowerCard) => {
  * TemplateResult[]:
  *     An array of Lit templates for the monitored attributes.
  */
->>>>>>> origin/main
 export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
   const displayed: DisplayedAttributes = {};
   const monitored = card.config.show_bars || default_show_bars;
@@ -354,20 +374,6 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
   if (card.plantinfo && card.plantinfo.result) {
     const result = card.plantinfo.result;
     for (const elem of monitored) {
-<<<<<<< HEAD
-      if (result[elem]) {
-        const { max, min, current, icon, sensor } = result[elem];
-        const entityState = card._hass.states[sensor];
-        const display_state = card._hass
-          .formatEntityState(entityState)
-          .replace(/[^\d,.+-]/g, "");
-        // Get unit from entity state attributes (respects user customizations)
-        const unit_of_measurement =
-          entityState?.attributes?.unit_of_measurement ||
-          result[elem].unit_of_measurement ||
-          "";
-        const limits: Limits = { max: Number(max), min: Number(min) };
-=======
       const attr = result[elem];
       let sensorId = attr?.sensor;
 
@@ -441,15 +447,10 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
           min: min !== null ? Number(min) : null,
         };
 
->>>>>>> origin/main
         displayed[elem] = {
           name: elem,
           current: Number(current),
           limits,
-<<<<<<< HEAD
-          icon: String(icon),
-          sensor: String(sensor),
-=======
           icon: String(
             attr?.icon ||
               (elem === "temperature"
@@ -457,7 +458,6 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
                 : "mdi:water-percent"),
           ),
           sensor: String(sensorId || ""),
->>>>>>> origin/main
           unit_of_measurement: String(unit_of_measurement),
           display_state,
         };
@@ -468,8 +468,6 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
   return renderAttributeChunks(card, displayed);
 };
 
-<<<<<<< HEAD
-=======
 /** Render a single plant attribute, optionally as a bar or just a value.
  *
  * Parameters:
@@ -482,7 +480,6 @@ export const renderAttributes = (card: FlowerCard): TemplateResult[] => {
  * TemplateResult:
  *     A Lit template for the attribute, with bars for moisture/light and values for temp/humidity.
  */
->>>>>>> origin/main
 export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
   const { max, min } = attr.limits;
   const unitTooltip = attr.unit_of_measurement;
@@ -490,13 +487,6 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
   const icon = attr.icon || "mdi:help-circle-outline";
   const val = attr.current ?? 0;
   const aval = !isNaN(val) && val !== null && val !== undefined;
-<<<<<<< HEAD
-  const display_val = attr.display_state;
-  // For log scale, use linear if value or min is 0 (log(0) is undefined)
-  const useLinear = !logScale || val <= 0 || min <= 0;
-  const pct = useLinear
-    ? 100 * Math.max(0, Math.min(1, (val - min) / (max - min)))
-=======
   const hasLimits =
     max !== null &&
     min !== null &&
@@ -517,7 +507,6 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
     ? hasLimits
       ? 100 * Math.max(0, Math.min(1, (val - min) / (max - min)))
       : 0
->>>>>>> origin/main
     : 100 *
       Math.max(
         0,
@@ -526,23 +515,13 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
           (Math.log(val) - Math.log(min)) / (Math.log(max) - Math.log(min)),
         ),
       );
-<<<<<<< HEAD
-  const toolTipText = aval
-    ? `${attr.name}: ${val} ${unitTooltip}<br>(${min} ~ ${max} ${unitTooltip})`
-    : card._hass.localize("state.default.unavailable");
-=======
 
   // Simple label/tooltip info
->>>>>>> origin/main
   const label =
     attr.name === "dli" || attr.name === "dli_24h"
       ? '<math style="display: inline-grid;" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mrow><mn>mol</mn></mrow><mrow><mn>d</mn><mn>⋅</mn><msup><mn>m</mn><mn>2</mn></msup></mrow></mfrac></mrow></math>'
       : unitTooltip;
-<<<<<<< HEAD
-  // Determine settings with explicit overrides taking precedence over display_type defaults
-=======
 
->>>>>>> origin/main
   const isCompact = card.config.display_type === DisplayType.Compact;
   const barsPerRow = card.config.bars_per_row ?? (isCompact ? 1 : 2);
   const showUnits = !(card.config.hide_units ?? isCompact);
@@ -550,49 +529,14 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
 
   const attributeCssClass = `attribute tooltip ${useFullWidth ? "width-100" : ""}`;
 
-<<<<<<< HEAD
-=======
   const isTempOrHum = attr.name === "temperature" || attr.name === "humidity";
 
->>>>>>> origin/main
   return html`
     <div
       class="${attributeCssClass}"
       @click="${() => moreInfo(card, attr.sensor)}"
     >
       <div class="tip" style="text-align:center;">
-<<<<<<< HEAD
-        ${unsafeHTML(toolTipText)}
-      </div>
-      <ha-icon .icon="${icon}"></ha-icon>
-      <div class="meter red">
-        <span
-          class="${aval
-            ? val < min || val > max
-              ? "bad"
-              : "good"
-            : "unavailable"}"
-          style="width: 100%;"
-        ></span>
-      </div>
-      <div class="meter green">
-        <span
-          class="${aval ? (val > max ? "bad" : "good") : "unavailable"}"
-          style="width:${aval ? pct : "0"}%;"
-        ></span>
-      </div>
-      <div class="meter red">
-        <span
-          class="bad"
-          style="width:${aval ? (val > max ? 100 : 0) : "0"}%;"
-        ></span>
-      </div>
-      ${showUnits
-        ? html`<div class="header">
-            <span class="value">${display_val}</span>&nbsp;<span class="unit"
-              >${unsafeHTML(label)}</span
-            >
-=======
         ${attr.name}: ${display_val} ${unitTooltip}
         ${hasLimits ? html`<br />(${min} - ${max})` : ""}
       </div>
@@ -620,7 +564,6 @@ export const renderAttribute = (card: FlowerCard, attr: DisplayedAttribute) => {
             <span class="value">${display_val}</span>${showUnits
               ? html` <span class="unit">${unsafeHTML(label)}</span>`
               : ""}
->>>>>>> origin/main
           </div>`
         : ""}
     </div>

@@ -260,8 +260,9 @@ export default class FlowerCard extends LitElement {
 
   private async _removePlant(ev: Event): Promise<void> {
     ev.stopPropagation();
-    const displayName = this.config?.name || this.stateObj?.attributes?.friendly_name;
-    
+    const displayName =
+      this.config?.name || this.stateObj?.attributes?.friendly_name;
+
     const confirmed = window.confirm(
       `Êtes-vous sûr de vouloir supprimer définitivement la plante "${displayName}" ?\n\nCette action supprimera l'intégration et toutes les données associées.`,
     );

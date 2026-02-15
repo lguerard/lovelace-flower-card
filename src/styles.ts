@@ -313,6 +313,33 @@ export const style = css`
   .watering-factor.active {
     background-color: var(--primary-color);
   }
+  .forecast-hint {
+    font-size: 0.8em;
+    font-weight: normal;
+    color: var(--secondary-text-color);
+  }
+  .care-badges {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .care-badge {
+    font-size: 0.75em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .care-badge.misting {
+    background-color: #3498db;
+    color: white;
+  }
+  .care-badge.tendency {
+    background-color: var(--secondary-background-color);
+    border: 1px solid currentColor;
+  }
 
   /* Meter / Attributes */
   .meter-container {
