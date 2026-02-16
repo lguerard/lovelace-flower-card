@@ -414,6 +414,10 @@ export const style = css`
     background-color: #27ae60;
     color: white;
   }
+  .care-badge.inactive {
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0.5;
+  }
   .care-badge.tendency {
     background-color: var(--secondary-background-color);
     border: 1px solid currentColor;

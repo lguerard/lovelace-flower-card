@@ -501,6 +501,10 @@
     background-color: #27ae60;
     color: white;
   }
+  .care-badge.inactive {
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0.5;
+  }
   .care-badge.tendency {
     background-color: var(--secondary-background-color);
     border: 1px solid currentColor;
@@ -718,7 +722,7 @@
               `:""}
           ${e.smart_watering?n.html`
                 <span
-                  class="care-badge smart"
+                  class="care-badge ${isNaN(r)?"inactive":"smart"}"
                   title="Intelligent Assistant: Automated watering frequency"
                 >
                   <ha-icon icon="mdi:auto-fix"></ha-icon> AUTO
