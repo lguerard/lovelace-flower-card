@@ -30,13 +30,19 @@ export const renderWateringStatus = (card: FlowerCard) => {
 
   const factor = watering.water_factor || 1.0;
   let nextText = "";
+  let label = "Next watering:";
   if (isNaN(days)) {
-    nextText = watering.next_watering; // Fallback to raw string if calc fails
+    nextText = watering.next_watering || "Unknown"; // Fallback to raw string if calc fails
   } else if (days === 0) nextText = "Today";
   else if (days === 1) nextText = "Tomorrow";
-  else if (days === -1) nextText = "Yesterday";
-  else if (days > 0) nextText = `In ${days} days`;
-  else nextText = `${Math.abs(days)} days ago`;
+  else if (days === -1) {
+    nextText = "Yesterday";
+    label = "Watering overdue:";
+  } else if (days > 0) nextText = `In ${days} days`;
+  else {
+    nextText = `${Math.abs(days)} days ago`;
+    label = "Watering overdue:";
+  }
 
   return html`
     <div
@@ -46,7 +52,7 @@ export const renderWateringStatus = (card: FlowerCard) => {
       <div class="watering-row">
         <span class="watering-next">
           <ha-icon .icon="mdi:watering-can"></ha-icon>
-          Next watering: ${nextText}
+          ${label} ${nextText}
           ${watering.forecast_impact
             ? html`<span class="forecast-hint" title="Forecasted weather impact"
                 >(${watering.forecast_impact})</span
