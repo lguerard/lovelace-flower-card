@@ -161,9 +161,13 @@ export const style = css`
     transform: rotate(-1.5deg); /* Slight handwritten tilt */
   }
   #name .name-text {
-    white-space: nowrap;
+    /* Allow text to wrap on small screens to avoid truncation */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.2;
+    max-height: 2.4em;
   }
   .header .name-area-container {
     margin-top: 16px;

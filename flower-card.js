@@ -56,9 +56,7 @@
             </div>
             <div id="next-watering" class="${A} tooltip">
               <span>${x}</span>
-              ${this.stateObj.attributes.water_factor&&1!==this.stateObj.attributes.water_factor?n.html`<span class="multiplier"
-                    >${this.stateObj.attributes.water_factor.toFixed(2)}x</span
-                  >`:""}
+              ${(()=>{const t=this.stateObj.attributes.water_factor||this.stateObj.attributes.watering?.water_factor||this.plantinfo?.result?.watering?.water_factor;return t&&1!==t?n.html`<span class="multiplier">${t.toFixed(2)}x</span>`:n.html``})()}
               ${k?n.html`<span class="tip">${k}</span>`:""}
               <ha-icon
                 class="water-button"
@@ -251,9 +249,13 @@
     transform: rotate(-1.5deg); /* Slight handwritten tilt */
   }
   #name .name-text {
-    white-space: nowrap;
+    /* Allow text to wrap on small screens to avoid truncation */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.2;
+    max-height: 2.4em;
   }
   .header .name-area-container {
     margin-top: 16px;
@@ -743,14 +745,6 @@
                   title="Low humidity - misting recommended"
                 >
                   <ha-icon icon="mdi:sprinkler-variant"></ha-icon> MIST
-                </span>
-              `:""}
-          ${e.smart_watering?n.html`
-                <span
-                  class="care-badge ${isNaN(r)?"inactive":"smart"}"
-                  title="Intelligent Assistant: Automated watering frequency"
-                >
-                  <ha-icon icon="mdi:auto-fix"></ha-icon> AUTO
                 </span>
               `:""}
           <span

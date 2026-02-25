@@ -82,16 +82,6 @@ export const renderWateringStatus = (card: FlowerCard) => {
                 </span>
               `
             : ""}
-          ${watering.smart_watering
-            ? html`
-                <span
-                  class="care-badge ${isNaN(days) ? "inactive" : "smart"}"
-                  title="Intelligent Assistant: Automated watering frequency"
-                >
-                  <ha-icon icon="mdi:auto-fix"></ha-icon> AUTO
-                </span>
-              `
-            : ""}
           <span
             class="watering-factor ${factor !== 1.0 ? "active" : ""}"
             title="Adaptive learning factor: Corrects base frequency based on your habits"

@@ -514,12 +514,16 @@ export default class FlowerCard extends LitElement {
             </div>
             <div id="next-watering" class="${wateringClass} tooltip">
               <span>${nextWateringValue}</span>
-              ${this.stateObj.attributes.water_factor &&
-              this.stateObj.attributes.water_factor !== 1.0
-                ? html`<span class="multiplier"
-                    >${this.stateObj.attributes.water_factor.toFixed(2)}x</span
-                  >`
-                : ""}
+              ${(() => {
+                const factor =
+                  this.stateObj.attributes.water_factor ||
+                  this.stateObj.attributes.watering?.water_factor ||
+                  this.plantinfo?.result?.watering?.water_factor;
+                if (factor && factor !== 1.0) {
+                  return html`<span class="multiplier">${factor.toFixed(2)}x</span>`;
+                }
+                return html``;
+              })()}
               ${wateringExplanation
                 ? html`<span class="tip">${wateringExplanation}</span>`
                 : ""}
