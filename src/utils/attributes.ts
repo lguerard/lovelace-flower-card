@@ -91,6 +91,14 @@ export const renderWateringStatus = (card: FlowerCard) => {
         </div>
       </div>
       <div class="health-row">
+        ${card.stateObj.attributes.plant_advice
+          ? html`
+              <div class="plant-advice">
+                <ha-icon icon="mdi:comment-quote-outline"></ha-icon>
+                <span>${card.stateObj.attributes.plant_advice}</span>
+              </div>
+            `
+          : ""}
         ${health
           ? html`
               <div

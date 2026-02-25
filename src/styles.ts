@@ -180,6 +180,11 @@ export const style = css`
     margin-left: 4px;
     flex-shrink: 0;
   }
+  .mood-emoji {
+    font-size: 0.8em;
+    margin-left: 4px;
+    filter: drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.1));
+  }
   .header #species,
   .header #area {
     display: block;
@@ -351,6 +356,26 @@ export const style = css`
     display: flex;
     flex-direction: column;
     gap: 4px;
+  }
+  .plant-advice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px;
+    margin-bottom: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+    border-left: 3px solid var(--primary-color);
+    font-size: 0.9em;
+    font-style: italic;
+    color: var(--primary-text-color);
+    line-height: 1.4;
+  }
+  .plant-advice ha-icon {
+    --mdc-icon-size: 16px;
+    margin-top: 2px;
+    color: var(--primary-color);
+    flex-shrink: 0;
   }
   .health-score-container {
     display: flex;

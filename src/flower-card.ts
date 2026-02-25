@@ -495,6 +495,11 @@ export default class FlowerCard extends LitElement {
             <div class="name-area-container">
               <span id="name">
                 <span class="name-text">${displayName}</span>
+                ${this.stateObj.attributes.plant_mood
+                  ? html`<span class="mood-emoji"
+                      >${this.stateObj.attributes.plant_mood}</span
+                    >`
+                  : ""}
                 <ha-icon
                   class="info-button"
                   icon="mdi:information-outline"
@@ -520,7 +525,9 @@ export default class FlowerCard extends LitElement {
                   this.stateObj.attributes.watering?.water_factor ||
                   this.plantinfo?.result?.watering?.water_factor;
                 if (factor && factor !== 1.0) {
-                  return html`<span class="multiplier">${factor.toFixed(2)}x</span>`;
+                  return html`<span class="multiplier"
+                    >${factor.toFixed(2)}x</span
+                  >`;
                 }
                 return html``;
               })()}
