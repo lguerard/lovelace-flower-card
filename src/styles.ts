@@ -180,11 +180,6 @@ export const style = css`
     margin-left: 4px;
     flex-shrink: 0;
   }
-  .mood-emoji {
-    font-size: 0.8em;
-    margin-left: 4px;
-    filter: drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.1));
-  }
   .header #species,
   .header #area {
     display: block;

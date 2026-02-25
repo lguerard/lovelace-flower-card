@@ -495,11 +495,6 @@ export default class FlowerCard extends LitElement {
             <div class="name-area-container">
               <span id="name">
                 <span class="name-text">${displayName}</span>
-                ${this.stateObj.attributes.plant_mood
-                  ? html`<span class="mood-emoji"
-                      >${this.stateObj.attributes.plant_mood}</span
-                    >`
-                  : ""}
                 <ha-icon
                   class="info-button"
                   icon="mdi:information-outline"

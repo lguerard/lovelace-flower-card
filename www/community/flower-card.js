@@ -41,9 +41,6 @@
             <div class="name-area-container">
               <span id="name">
                 <span class="name-text">${a}</span>
-                ${this.stateObj.attributes.plant_mood?n.html`<span class="mood-emoji"
-                      >${this.stateObj.attributes.plant_mood}</span
-                    >`:""}
                 <ha-icon
                   class="info-button"
                   icon="mdi:information-outline"
@@ -272,11 +269,6 @@
     color: rgb(240, 163, 163);
     margin-left: 4px;
     flex-shrink: 0;
-  }
-  .mood-emoji {
-    font-size: 0.8em;
-    margin-left: 4px;
-    filter: drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.1));
   }
   .header #species,
   .header #area {
