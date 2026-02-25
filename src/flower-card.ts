@@ -258,6 +258,13 @@ export default class FlowerCard extends LitElement {
     });
   }
 
+  private _markSkipped(ev: Event): void {
+    ev.stopPropagation();
+    this._hass.callService("plant", "skip_watering", {
+      entity_id: this.config?.entity,
+    });
+  }
+
   private _toggleSort(ev: Event): void {
     ev.stopPropagation();
     if (this.config?.sort_entity) {
@@ -495,12 +502,6 @@ export default class FlowerCard extends LitElement {
                   title="Plant Information"
                 ></ha-icon>
                 <ha-icon
-                  class="delete-button-main"
-                  icon="mdi:delete-outline"
-                  @click="${this._removePlant}"
-                  title="Supprimer la plante"
-                ></ha-icon>
-                <ha-icon
                   .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
                     ? "alert-circle-outline"
                     : ""}"
@@ -513,6 +514,12 @@ export default class FlowerCard extends LitElement {
             </div>
             <div id="next-watering" class="${wateringClass} tooltip">
               <span>${nextWateringValue}</span>
+              ${this.stateObj.attributes.water_factor &&
+              this.stateObj.attributes.water_factor !== 1.0
+                ? html`<span class="multiplier"
+                    >${this.stateObj.attributes.water_factor.toFixed(2)}x</span
+                  >`
+                : ""}
               ${wateringExplanation
                 ? html`<span class="tip">${wateringExplanation}</span>`
                 : ""}
@@ -521,6 +528,12 @@ export default class FlowerCard extends LitElement {
                 icon="mdi:water-pump"
                 @click="${(e: Event) => this._markWatered(e)}"
                 title="Mark as watered"
+              ></ha-icon>
+              <ha-icon
+                class="skip-button"
+                icon="mdi:water-off"
+                @click="${(e: Event) => this._markSkipped(e)}"
+                title="Skip this watering"
               ></ha-icon>
               ${this.config?.sort_entity
                 ? html`

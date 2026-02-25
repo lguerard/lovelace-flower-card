@@ -214,6 +214,8 @@ export const style = css`
     justify-content: space-between;
     align-items: center;
     overflow: visible;
+    flex-wrap: wrap;
+    row-gap: 8px;
   }
   #next-watering {
     display: flex;
@@ -225,7 +227,6 @@ export const style = css`
     background: var(--secondary-background-color);
     color: var(--primary-text-color);
     white-space: nowrap;
-    flex-shrink: 0;
   }
   #next-watering.watering-urgent {
     background-color: var(--label-badge-red);
@@ -242,7 +243,14 @@ export const style = css`
   #next-watering span {
     font-weight: bold;
   }
-  #next-watering .water-button {
+  #next-watering .multiplier {
+    font-size: 0.7em;
+    opacity: 0.8;
+    margin-left: 2px;
+    font-weight: normal !important;
+  }
+  #next-watering .water-button,
+  #next-watering .skip-button {
     color: white;
     margin-left: 8px;
   }
@@ -252,6 +260,7 @@ export const style = css`
     opacity: 0.7;
   }
   .water-button,
+  .skip-button,
   .sort-button,
   .info-button,
   .delete-button-main {
@@ -259,14 +268,27 @@ export const style = css`
     --mdc-icon-size: 18px;
     vertical-align: middle;
     padding: 6px;
+    border-radius: 50%;
+    transition:
+      transform 0.2s,
+      opacity 0.2s,
+      background-color 0.2s;
     opacity: 0.7;
-    transition: opacity 0.2s;
   }
   .info-button:hover,
   .delete-button-main:hover,
   .water-button:hover,
+  .skip-button:hover,
   .sort-button:hover {
+    transform: scale(1.2);
     opacity: 1;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  .water-button:active,
+  .skip-button:active,
+  .sort-button:active {
+    transform: scale(0.9);
+    background-color: rgba(255, 255, 255, 0.4);
   }
   .delete-button-main {
     color: var(--error-color, #db4437);
