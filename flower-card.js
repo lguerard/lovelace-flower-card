@@ -160,22 +160,15 @@
   .header {
     padding-top: 8px;
     min-height: 72px;
-    display: flex;
-    align-items: flex-start;
     overflow: visible !important;
   }
   .header-compact {
     padding-top: 4px;
     min-height: 55px;
-    display: flex;
-    align-items: center;
     overflow: visible !important;
   }
-  .header.no-image,
-  .header-compact.no-image {
-    display: block;
-  }
   .header.no-image {
+    height: auto;
     padding: 16px;
   }
   .header.no-image + .divider {
@@ -192,13 +185,13 @@
   }
   .plant-image-container {
     position: relative;
+    float: left;
     z-index: 2;
     padding: 6px;
     background: white;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     border-bottom: 15px solid white; /* Polaroid bottom */
     transform: rotate(2deg); /* Organic placement tilt */
-    flex-shrink: 0;
   }
   .plant-image-container::before {
     content: "";
