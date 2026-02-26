@@ -153,6 +153,7 @@ export const style = css`
     text-transform: capitalize;
     display: flex;
     align-items: center;
+    gap: 8px;
     width: 100%;
     font-family: "Indie Flower", "cursive", serif;
     font-size: 1.8em;
@@ -161,13 +162,21 @@ export const style = css`
     transform: rotate(-1.5deg); /* Slight handwritten tilt */
   }
   #name .name-text {
+    flex: 1;
+    min-width: 0;
     /* Allow text to wrap on small screens to avoid truncation */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.2;
-    max-height: 2.4em;
+    word-break: break-word; /* Ensure it wraps if a long word is used */
+  }
+  @media (max-width: 450px) {
+    #name {
+      font-size: 1.4em; /* Slightly smaller for mobile */
+      transform: none; /* Less tilting on mobile for readability */
+    }
   }
   .header .name-area-container {
     margin-top: 16px;
@@ -218,8 +227,22 @@ export const style = css`
     justify-content: space-between;
     align-items: center;
     overflow: visible;
+    flex: 1;
+    min-width: 0;
     flex-wrap: wrap;
-    row-gap: 8px;
+    row-gap: 4px;
+    padding-bottom: 8px;
+  }
+  @media (max-width: 450px) {
+    .header-text {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    #next-watering {
+      margin-left: 0;
+      margin-right: 0;
+    }
   }
   #next-watering {
     display: flex;
