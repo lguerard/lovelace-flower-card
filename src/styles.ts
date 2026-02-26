@@ -440,11 +440,15 @@ export const style = css`
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap; /* Allow wrapping */
   }
   .watering-explanation {
     font-size: 0.85em;
     color: var(--secondary-text-color);
     margin-top: 4px;
+    line-height: 1.4;
+    white-space: normal; /* Ensure it wraps */
+    word-break: break-word; /* Allow breaking long words */
   }
   .watering-factor {
     font-size: 0.8em;
