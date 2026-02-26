@@ -172,9 +172,9 @@ export const style = css`
     line-height: 1.2;
     word-break: break-word; /* Ensure it wraps if a long word is used */
   }
-  @media (max-width: 450px) {
+  @media (max-width: 650px) {
     #name {
-      font-size: 1.4em; /* Slightly smaller for mobile */
+      font-size: 1.3em; /* Smaller for mobile to fit more */
       transform: none; /* Less tilting on mobile for readability */
     }
   }
@@ -233,15 +233,24 @@ export const style = css`
     row-gap: 4px;
     padding-bottom: 8px;
   }
-  @media (max-width: 450px) {
+  @media (max-width: 650px) {
     .header-text {
       flex-direction: column;
       align-items: flex-start;
-      gap: 12px;
+      gap: 6px;
     }
     #next-watering {
       margin-left: 0;
       margin-right: 0;
+      margin-top: 4px;
+    }
+    .header #species,
+    .header #area,
+    .header-compact #species {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      max-height: none;
     }
   }
   #next-watering {
