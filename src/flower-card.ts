@@ -512,7 +512,6 @@ export default class FlowerCard extends LitElement {
               ${!hideSpecies
                 ? html`<span id="species">${species || html`&nbsp;`}</span>`
                 : ""}
-              ${renderCareIcons(this)}
             </div>
             <div id="next-watering" class="${wateringClass} tooltip">
               <span>${nextWateringValue}</span>
@@ -556,7 +555,7 @@ export default class FlowerCard extends LitElement {
             </div>
           </div>
           <span id="battery"
-            >${renderExtraBadges(this)}${renderBattery(this)}</span
+            >${renderExtraBadges(this)}${renderBattery(this)}${renderCareIcons(this)}</span
           >
         </div>
         ${renderWateringStatus(this)}
