@@ -493,25 +493,32 @@ export default class FlowerCard extends LitElement {
               `
             : ""}
           <div class="header-text">
-            <div class="name-area-container">
-              <span id="name">
-                <span class="name-text">${displayName}</span>
-                <ha-icon
-                  class="info-button"
-                  icon="mdi:information-outline"
-                  @click="${this._toggleInfo}"
-                  title="Plant Information"
-                ></ha-icon>
-                <ha-icon
-                  .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
-                    ? "alert-circle-outline"
-                    : ""}"
-                ></ha-icon>
-              </span>
-              <span id="area">${area || html`&nbsp;`}</span>
-              ${!hideSpecies
-                ? html`<span id="species">${species || html`&nbsp;`}</span>`
-                : ""}
+            <div class="header-header">
+              <div class="name-area-container">
+                <span id="name">
+                  <span class="name-text">${displayName}</span>
+                  <ha-icon
+                    class="info-button"
+                    icon="mdi:information-outline"
+                    @click="${this._toggleInfo}"
+                    title="Plant Information"
+                  ></ha-icon>
+                  <ha-icon
+                    .icon="mdi:${this.stateObj.state.toLowerCase() == "problem"
+                      ? "alert-circle-outline"
+                      : ""}"
+                  ></ha-icon>
+                </span>
+                <span id="area">${area || html`&nbsp;`}</span>
+                ${!hideSpecies
+                  ? html`<span id="species">${species || html`&nbsp;`}</span>`
+                  : ""}
+              </div>
+              <span id="battery"
+                >${renderExtraBadges(this)}${renderBattery(
+                  this,
+                )}${renderCareIcons(this)}</span
+              >
             </div>
             <div id="next-watering" class="${wateringClass} tooltip">
               <span>${nextWateringValue}</span>
@@ -554,11 +561,6 @@ export default class FlowerCard extends LitElement {
                 : ""}
             </div>
           </div>
-          <span id="battery"
-            >${renderExtraBadges(this)}${renderBattery(this)}${renderCareIcons(
-              this,
-            )}</span
-          >
         </div>
         ${renderWateringStatus(this)}
         <div class="divider"></div>
@@ -596,11 +598,16 @@ export default class FlowerCard extends LitElement {
           // Use a short timeout by not awaiting long-running operations.
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          const opb = await hass.callService("openplantbook", "get", {
-            species: species,
-          }, {
-            return_response: true
-          });
+          const opb = await hass.callService(
+            "openplantbook",
+            "get",
+            {
+              species: species,
+            },
+            {
+              return_response: true,
+            },
+          );
           if (opb) {
             // Map common OPB keys to simple min/max entries so renderCareIcons can use them
             const opbPlant: any = opb;
@@ -639,23 +646,57 @@ export default class FlowerCard extends LitElement {
           // Check if we can get it from attributes if the HA integration already fetched it
           const attr = this.stateObj?.attributes;
           if (attr) {
-            if (!result.moisture && (attr.min_moisture !== undefined || attr.min_soil_moisture !== undefined)) {
-                result.moisture = {
-                    min: attr.min_moisture ?? attr.min_soil_moisture,
-                    max: attr.max_moisture ?? attr.max_soil_moisture,
-                    unit_of_measurement: "%"
-                };
+            if (
+              !result.moisture &&
+              (attr.min_moisture !== undefined ||
+                attr.min_soil_moisture !== undefined)
+            ) {
+              result.moisture = {
+                min: attr.min_moisture ?? attr.min_soil_moisture,
+                max: attr.max_moisture ?? attr.max_soil_moisture,
+                unit_of_measurement: "%",
+              };
             }
-            if (!result.illuminance && (attr.min_illuminance !== undefined || attr.min_light_lux !== undefined)) {
-                result.illuminance = {
-                    min: attr.min_illuminance ?? attr.min_light_lux,
-                    max: attr.max_illuminance ?? attr.max_light_lux,
-                    unit_of_measurement: "lx"
-                };
+            if (
+              !result.illuminance &&
+              (attr.min_illuminance !== undefined ||
+                attr.min_light_lux !== undefined)
+            ) {
+              result.illuminance = {
+                min: attr.min_illuminance ?? attr.min_light_lux,
+                max: attr.max_illuminance ?? attr.max_light_lux,
+                unit_of_measurement: "lx",
+              };
             }
             this.plantinfo.result = result;
           }
         }
+      } else if (this.stateObj?.attributes) {
+        // Fallback for when species is known but callService is not available/used
+        const attr = this.stateObj.attributes;
+        if (
+          !result.moisture &&
+          (attr.min_moisture !== undefined ||
+            attr.min_soil_moisture !== undefined)
+        ) {
+          result.moisture = {
+            min: attr.min_moisture ?? attr.min_soil_moisture,
+            max: attr.max_moisture ?? attr.max_soil_moisture,
+            unit_of_measurement: "%",
+          };
+        }
+        if (
+          !result.illuminance &&
+          (attr.min_illuminance !== undefined ||
+            attr.min_light_lux !== undefined)
+        ) {
+          result.illuminance = {
+            min: attr.min_illuminance ?? attr.min_light_lux,
+            max: attr.max_illuminance ?? attr.max_light_lux,
+            unit_of_measurement: "lx",
+          };
+        }
+        this.plantinfo.result = result;
       }
     } catch {
       this.plantinfo = { result: {} };

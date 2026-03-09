@@ -66,6 +66,14 @@ export const style = css`
     gap: 4px;
     margin-right: 16px;
     margin-top: -15px;
+    z-index: 10;
+  }
+  .header-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: flex-start;
+    padding-right: 16px;
   }
   .header {
     padding-top: 8px;
