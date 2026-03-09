@@ -486,6 +486,21 @@ export const style = css`
     gap: 4px;
     align-items: center;
   }
+  .care-icons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: 6px;
+  }
+  .care-icons .care-group {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+  }
+  .care-icon {
+    --mdc-icon-size: 16px;
+    opacity: 0.95;
+  }
   .care-badge {
     font-size: 0.75em;
     padding: 2px 6px;
