@@ -14,6 +14,7 @@ import {
   renderBattery,
   renderExtraBadges,
   renderWateringStatus,
+  renderCareIcons,
 } from "./utils/attributes";
 import {
   CARD_NAME,
@@ -511,6 +512,7 @@ export default class FlowerCard extends LitElement {
               ${!hideSpecies
                 ? html`<span id="species">${species || html`&nbsp;`}</span>`
                 : ""}
+              ${renderCareIcons(this)}
             </div>
             <div id="next-watering" class="${wateringClass} tooltip">
               <span>${nextWateringValue}</span>
