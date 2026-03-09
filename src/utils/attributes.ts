@@ -700,7 +700,17 @@ export const renderCareIcons = (card: FlowerCard) => {
     waterIcons = makeIcons(drops, "mdi:water", "mdi:water", "#3498db");
   }
 
-  if (lightIcons.length === 0 && waterIcons.length === 0) return html``;
+  if (lightIcons.length === 0 && waterIcons.length === 0) {
+    return html`<div class="care-icons">
+      <span class="care-info tooltip">
+        <ha-icon icon="mdi:information-outline" class="care-icon"></ha-icon>
+        <div class="tip">
+          Species preference data unavailable. Install OpenPlantbook or set
+          thresholds in the plant integration.
+        </div>
+      </span>
+    </div>`;
+  }
 
   return html`<div class="care-icons">
     ${lightIcons.length

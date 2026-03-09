@@ -497,6 +497,11 @@ export const style = css`
     gap: 2px;
     align-items: center;
   }
+  .care-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
   .care-icon {
     --mdc-icon-size: 16px;
     opacity: 0.95;
