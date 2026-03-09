@@ -623,3 +623,91 @@ export const renderAttributeChunks = (
     })
     .flat();
 };
+
+/**
+ * Render small care icons for Light (5 suns) and Water (5 drops) based on
+ * plant preference limits returned by the plant info (min/max for attributes).
+ */
+export const renderCareIcons = (card: FlowerCard) => {
+  const result = card.plantinfo?.result || {};
+
+  const makeIcons = (
+    activeCount: number,
+    activeIcon: string,
+    inactiveIcon: string,
+    activeColor: string,
+  ) => {
+    const icons = [] as TemplateResult[];
+    for (let i = 0; i < 5; i++) {
+      const active = i < activeCount;
+      icons.push(
+        html`<ha-icon
+          class="care-icon"
+          .icon="${active ? activeIcon : inactiveIcon}"
+          style="color: ${active
+            ? activeColor
+            : "rgba(0,0,0,0.15)"}; --mdc-icon-size:16px"
+        ></ha-icon>`,
+      );
+    }
+    return icons;
+  };
+
+  // Light preference: prefer DLI then illuminance
+  const lightAttr = result.dli || result.illuminance || result.brightness;
+  let lightIcons: TemplateResult[] = [];
+  if (
+    lightAttr &&
+    (lightAttr.min !== undefined || lightAttr.max !== undefined)
+  ) {
+    const min = Number(lightAttr.min ?? 0);
+    const max = Number(
+      lightAttr.max ??
+        (lightAttr.unit_of_measurement &&
+        String(lightAttr.unit_of_measurement).toLowerCase().includes("mol")
+          ? 50
+          : 100000),
+    );
+    const pref = (min + max) / 2 || 0;
+    const globalMax = String(lightAttr.unit_of_measurement || "")
+      .toLowerCase()
+      .includes("mol")
+      ? 50
+      : 100000;
+    const norm = Math.max(0, Math.min(1, pref / globalMax));
+    const suns = Math.max(1, Math.min(5, Math.round(norm * 4) + 1));
+    lightIcons = makeIcons(
+      suns,
+      "mdi:weather-sunny",
+      "mdi:weather-sunny",
+      "#f1c40f",
+    );
+  }
+
+  // Moisture preference: use moisture attribute limits if present
+  const moistAttr =
+    result.moisture || result.soil_moisture || result.soil_moisture_percent;
+  let waterIcons: TemplateResult[] = [];
+  if (
+    moistAttr &&
+    (moistAttr.min !== undefined || moistAttr.max !== undefined)
+  ) {
+    const min = Number(moistAttr.min ?? 0);
+    const max = Number(moistAttr.max ?? 100);
+    const pref = (min + max) / 2 || 0;
+    const norm = Math.max(0, Math.min(1, pref / 100));
+    const drops = Math.max(1, Math.min(5, Math.round(norm * 4) + 1));
+    waterIcons = makeIcons(drops, "mdi:water", "mdi:water", "#3498db");
+  }
+
+  if (lightIcons.length === 0 && waterIcons.length === 0) return html``;
+
+  return html`<div class="care-icons">
+    ${lightIcons.length
+      ? html`<div class="care-group light">${lightIcons}</div>`
+      : ""}
+    ${waterIcons.length
+      ? html`<div class="care-group water">${waterIcons}</div>`
+      : ""}
+  </div>`;
+};
