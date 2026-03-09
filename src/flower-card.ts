@@ -582,7 +582,11 @@ export default class FlowerCard extends LitElement {
       );
       const hasMoistureLimits = !!(result.moisture?.min !== undefined);
       const species = this.stateObj?.attributes?.species;
-      if ((species && (!hasLightLimits || !hasMoistureLimits)) && hass.callService) {
+      if (
+        species &&
+        (!hasLightLimits || !hasMoistureLimits) &&
+        hass.callService
+      ) {
         try {
           // Call the OpenPlantbook service (if available) to get species prefs
           // Note: service may not exist in all setups — it's safe to catch.
@@ -594,13 +598,17 @@ export default class FlowerCard extends LitElement {
           // @ts-ignore
           const opb = await hass.callService("openplantbook", "get", {
             species: species,
+          }, {
+            return_response: true
           });
           if (opb) {
             // Map common OPB keys to simple min/max entries so renderCareIcons can use them
             const opbPlant: any = opb;
             // Illuminance mapping keys used by the component
-            const min_lx = opbPlant.min_light_lux ?? opbPlant.min_illuminance ?? null;
-            const max_lx = opbPlant.max_light_lux ?? opbPlant.max_illuminance ?? null;
+            const min_lx =
+              opbPlant.min_light_lux ?? opbPlant.min_illuminance ?? null;
+            const max_lx =
+              opbPlant.max_light_lux ?? opbPlant.max_illuminance ?? null;
             if (!result.illuminance && (min_lx !== null || max_lx !== null)) {
               result.illuminance = {
                 min: min_lx,
@@ -609,8 +617,10 @@ export default class FlowerCard extends LitElement {
               };
             }
             // Moisture mapping
-            const min_m = opbPlant.min_soil_moist ?? opbPlant.min_soil_moisture ?? null;
-            const max_m = opbPlant.max_soil_moist ?? opbPlant.max_soil_moisture ?? null;
+            const min_m =
+              opbPlant.min_soil_moist ?? opbPlant.min_soil_moisture ?? null;
+            const max_m =
+              opbPlant.max_soil_moist ?? opbPlant.max_soil_moisture ?? null;
             if (!result.moisture && (min_m !== null || max_m !== null)) {
               result.moisture = {
                 min: min_m,
@@ -619,9 +629,32 @@ export default class FlowerCard extends LitElement {
               };
             }
             this.plantinfo.result = result;
+          } else {
+            // If opb is null, it means the service call returned nothing
+            // We can check if response_data is nested (depends on HA version)
+            // but usually return_response: true handles it.
           }
         } catch (e) {
-          // ignore — opb not available or call failed
+          // If we are here, likely the service call failed or service doesn't exist
+          // Check if we can get it from attributes if the HA integration already fetched it
+          const attr = this.stateObj?.attributes;
+          if (attr) {
+            if (!result.moisture && (attr.min_moisture !== undefined || attr.min_soil_moisture !== undefined)) {
+                result.moisture = {
+                    min: attr.min_moisture ?? attr.min_soil_moisture,
+                    max: attr.max_moisture ?? attr.max_soil_moisture,
+                    unit_of_measurement: "%"
+                };
+            }
+            if (!result.illuminance && (attr.min_illuminance !== undefined || attr.min_light_lux !== undefined)) {
+                result.illuminance = {
+                    min: attr.min_illuminance ?? attr.min_light_lux,
+                    max: attr.max_illuminance ?? attr.max_light_lux,
+                    unit_of_measurement: "lx"
+                };
+            }
+            this.plantinfo.result = result;
+          }
         }
       }
     } catch {

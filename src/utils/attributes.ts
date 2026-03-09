@@ -654,7 +654,12 @@ export const renderCareIcons = (card: FlowerCard) => {
   };
 
   // Light preference: prefer DLI then illuminance
-  const lightAttr = result.dli || result.illuminance || result.brightness;
+  const lightAttr =
+    result.dli ||
+    result.illuminance ||
+    result.brightness ||
+    result.light_lux ||
+    result.light;
   let lightIcons: TemplateResult[] = [];
   if (
     lightAttr &&
@@ -686,7 +691,11 @@ export const renderCareIcons = (card: FlowerCard) => {
 
   // Moisture preference: use moisture attribute limits if present
   const moistAttr =
-    result.moisture || result.soil_moisture || result.soil_moisture_percent;
+    result.moisture ||
+    result.soil_moisture ||
+    result.soil_moisture_percent ||
+    result.moist ||
+    result.moisture_percent;
   let waterIcons: TemplateResult[] = [];
   if (
     moistAttr &&
