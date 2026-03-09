@@ -555,7 +555,9 @@ export default class FlowerCard extends LitElement {
             </div>
           </div>
           <span id="battery"
-            >${renderExtraBadges(this)}${renderBattery(this)}${renderCareIcons(this)}</span
+            >${renderExtraBadges(this)}${renderBattery(this)}${renderCareIcons(
+              this,
+            )}</span
           >
         </div>
         ${renderWateringStatus(this)}
@@ -572,6 +574,56 @@ export default class FlowerCard extends LitElement {
         type: "plant/get_info",
         entity_id: this.config?.entity,
       });
+      // If thresholds are missing but species is known, try fetching OpenPlantbook
+      // to provide species preference fallbacks for the care icons.
+      const result = (this.plantinfo?.result as any) || {};
+      const hasLightLimits = !!(
+        result.illuminance?.min !== undefined || result.dli?.min !== undefined
+      );
+      const hasMoistureLimits = !!(result.moisture?.min !== undefined);
+      const species = this.stateObj?.attributes?.species;
+      if ((species && (!hasLightLimits || !hasMoistureLimits)) && hass.callService) {
+        try {
+          // Call the OpenPlantbook service (if available) to get species prefs
+          // Note: service may not exist in all setups — it's safe to catch.
+          // Service name and payload follow the plant helper conventions.
+          // Using non-blocking call but await result if possible via callService return.
+          // Some HA frontends don't return a promise with response; wrap in try/catch.
+          // Use a short timeout by not awaiting long-running operations.
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          const opb = await hass.callService("openplantbook", "get", {
+            species: species,
+          });
+          if (opb) {
+            // Map common OPB keys to simple min/max entries so renderCareIcons can use them
+            const opbPlant: any = opb;
+            // Illuminance mapping keys used by the component
+            const min_lx = opbPlant.min_light_lux ?? opbPlant.min_illuminance ?? null;
+            const max_lx = opbPlant.max_light_lux ?? opbPlant.max_illuminance ?? null;
+            if (!result.illuminance && (min_lx !== null || max_lx !== null)) {
+              result.illuminance = {
+                min: min_lx,
+                max: max_lx,
+                unit_of_measurement: "lx",
+              };
+            }
+            // Moisture mapping
+            const min_m = opbPlant.min_soil_moist ?? opbPlant.min_soil_moisture ?? null;
+            const max_m = opbPlant.max_soil_moist ?? opbPlant.max_soil_moisture ?? null;
+            if (!result.moisture && (min_m !== null || max_m !== null)) {
+              result.moisture = {
+                min: min_m,
+                max: max_m,
+                unit_of_measurement: "%",
+              };
+            }
+            this.plantinfo.result = result;
+          }
+        } catch (e) {
+          // ignore — opb not available or call failed
+        }
+      }
     } catch {
       this.plantinfo = { result: {} };
     }
